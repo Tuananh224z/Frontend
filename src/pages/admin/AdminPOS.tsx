@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ShoppingCart, Trash2, Plus, Minus, X, CreditCard, Banknote, Smartphone, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, Plus, Minus, X, CreditCard, Banknote, Smartphone, ChevronDown } from 'lucide-react';
 
 /* ─── Types ─── */
 type Variant = { id: string; label: string; price: number; origPrice: number };

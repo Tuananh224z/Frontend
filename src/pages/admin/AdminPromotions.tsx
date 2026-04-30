@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, Search, X, Tag, Percent, Calendar, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, X, ToggleLeft, ToggleRight } from 'lucide-react';
 import DeleteConfirmModal from './DeleteConfirmModal';
 
 type Promo = {

@@ -9,6 +9,7 @@ export interface User {
   role: 'user' | 'admin';
   initials: string;
   isActive: boolean;
+  isVerified?: boolean;
   avatar?: string;
   createdAt?: string;
 }

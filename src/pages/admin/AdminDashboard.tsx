@@ -1,4 +1,4 @@
-import { ShoppingBag, Users, Package, Star, TrendingUp, ArrowUpRight, MoreHorizontal, DollarSign } from 'lucide-react';
+import { ShoppingBag, Users, Package, TrendingUp, ArrowUpRight, MoreHorizontal, DollarSign } from 'lucide-react';
 
 const stats = [
   { label: 'Doanh thu tháng', value: '₫248.5M', change: '+12.5%', up: true, icon: DollarSign, color: 'bg-blue-500' },
