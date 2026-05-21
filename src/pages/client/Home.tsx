@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import productService from '../../services/productService';
 import { ShoppingCart, Star, Cpu, HardDrive, Smartphone, ChevronRight } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 
@@ -130,8 +130,8 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [prodRes, brandRes] = await Promise.all([
-          axios.get(`${BACKEND_URL}/api/products?limit=5`),
-          axios.get(`${BACKEND_URL}/api/brands`)
+          productService.getProducts({ limit: 5 }),
+          productService.getBrands()
         ]);
 
         if (prodRes.data?.data && prodRes.data.data.length > 0) {

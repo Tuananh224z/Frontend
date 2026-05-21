@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import axios from 'axios';
+import chatbotService from '../../services/chatbotService';
 import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface SuggestedProduct {
@@ -54,7 +54,7 @@ export default function Chatbot() {
     // 1. Tải lịch sử chat
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/chat/sessions/${sessionToken}/messages`);
+        const response = await chatbotService.getSessionMessages(sessionToken);
         if (response.data?.status === 'success') {
           setMessages(response.data.data);
         }

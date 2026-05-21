@@ -1,0 +1,54 @@
+import api from './api';
+
+export const authService = {
+  getMe: async () => {
+    return api.get('/auth/me');
+  },
+
+  getProfile: async () => {
+    return api.get('/auth/profile');
+  },
+
+  login: async (credentials: { email: string; password?: string }) => {
+    return api.post('/auth/login', credentials);
+  },
+
+  register: async (userData: any) => {
+    return api.post('/auth/register', userData);
+  },
+
+  updateProfile: async (profileData: any) => {
+    return api.put('/auth/profile', profileData);
+  },
+
+  changePassword: async (passwordData: any) => {
+    return api.put('/auth/change-password', passwordData);
+  },
+
+  getWishlist: async () => {
+    return api.get('/auth/wishlist');
+  },
+
+  toggleWishlist: async (productId: string) => {
+    return api.post(`/auth/wishlist/${productId}`);
+  },
+
+  toggleFavorite: async (productId: string) => {
+    return api.post(`/auth/favorites/${productId}`);
+  },
+
+  // Admin User APIs
+  getUsers: async () => {
+    return api.get('/users');
+  },
+
+  toggleUserLock: async (userId: string) => {
+    return api.put(`/users/${userId}/toggle-lock`);
+  },
+
+  updateUserRole: async (userId: string, role: string) => {
+    return api.put(`/users/${userId}/role`, { role });
+  }
+};
+
+export default authService;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import productService from '../../../services/productService';
 import { ChevronRight } from 'lucide-react';
 import { useCart, type Product as CartProduct } from '../../../contexts/CartContext';
 import ProductGallery from './ProductGallery';
@@ -31,7 +31,6 @@ interface ProductType {
   description: string;
 }
 
-const BACKEND_URL = 'http://localhost:5000';
 
 const MOCK_ZEPHYRUS: ProductType = {
   _id: 'zephyrus-g14-mock',
@@ -80,7 +79,7 @@ export default function ProductDetail() {
           return;
         }
 
-        const res = await axios.get(`${BACKEND_URL}/api/products/${slug}`);
+        const res = await productService.getProductBySlug(slug!);
         if (res.data?.data) {
           setProduct(res.data.data);
         } else {
