@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User, Package, Heart, MapPin, LayoutGrid, LogOut } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 
 export default function Header() {
   const { totalItems } = useCart();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-xs">
@@ -41,12 +42,100 @@ export default function Header() {
 
           {/* Right actions: User avatar and Shopping cart */}
           <div className="hidden md:flex items-center gap-8 shrink-0">
-            {/* User Profile */}
-            <div className="flex flex-col items-center justify-center cursor-pointer group">
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-extrabold text-xs group-hover:scale-105 transition-transform">
-                T
-              </div>
-              <span className="text-[10px] font-bold text-slate-500 mt-1">tuananh</span>
+            {/* User Profile with Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex flex-col items-center justify-center cursor-pointer focus:outline-hidden group select-none bg-transparent border-0 p-0"
+              >
+                <div className="w-8 h-8 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-sm group-hover:bg-rose-100 transition-all duration-300">
+                  T
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 mt-1">tuananh</span>
+              </button>
+
+              {isDropdownOpen && (
+                <>
+                  {/* Invisible backdrop to close the dropdown */}
+                  <div 
+                    className="fixed inset-0 z-30 cursor-default" 
+                    onClick={() => setIsDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl border border-slate-200/80 shadow-xl py-3 z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
+                    {/* User Profile Info */}
+                    <div className="px-4 py-2 flex flex-col gap-0.5">
+                      <span className="font-bold text-slate-800 text-sm">tuananh</span>
+                      <span className="text-xs text-slate-400 font-medium">admin22@techstore.vn</span>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="border-t border-slate-100 my-2"></div>
+
+                    {/* Links */}
+                    <div className="flex flex-col">
+                      <Link 
+                        to="/profile" 
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold"
+                      >
+                        <User className="w-4.5 h-4.5 text-slate-400" />
+                        <span>Hồ sơ của tôi</span>
+                      </Link>
+
+                      <Link 
+                        to="/orders" 
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold"
+                      >
+                        <Package className="w-4.5 h-4.5 text-slate-400" />
+                        <span>Đơn hàng của tôi</span>
+                      </Link>
+
+                      <Link 
+                        to="/favorites" 
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold"
+                      >
+                        <Heart className="w-4.5 h-4.5 text-slate-400" />
+                        <span>Sản phẩm yêu thích</span>
+                      </Link>
+
+                      <Link 
+                        to="/addresses" 
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold"
+                      >
+                        <MapPin className="w-4.5 h-4.5 text-slate-400" />
+                        <span>Địa chỉ của tôi</span>
+                      </Link>
+
+                      <Link 
+                        to="/admin" 
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-purple-600 hover:bg-purple-50/50 transition-colors font-bold"
+                      >
+                        <LayoutGrid className="w-4.5 h-4.5 text-purple-500" />
+                        <span>Trang quản trị</span>
+                      </Link>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="border-t border-slate-100 my-2"></div>
+
+                    {/* Logout Button */}
+                    <button 
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        console.log('Logging out...');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50/50 transition-colors font-bold cursor-pointer text-left border-0 bg-transparent"
+                    >
+                      <LogOut className="w-4.5 h-4.5 text-red-500" />
+                      <span>Đăng xuất</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Shopping Cart */}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { ShoppingCart, Star, Cpu, HardDrive, Smartphone, ChevronRight } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
@@ -307,7 +308,10 @@ export default function Home() {
                   className="flex flex-col bg-white rounded-2xl border border-slate-200/60 overflow-hidden hover:shadow-xl transition-all duration-300 group"
                 >
                   {/* Product Image & Badge */}
-                  <div className="relative pt-[75%] bg-slate-100 overflow-hidden shrink-0">
+                  <Link
+                    to={`/product/${prod.slug}`}
+                    className="relative block pt-[75%] bg-slate-100 overflow-hidden shrink-0"
+                  >
                     <img
                       src={getProductImage(prod.images)}
                       alt={prod.name}
@@ -318,7 +322,7 @@ export default function Home() {
                         -{getDiscountPercent(prod.price, prod.discountPrice!)}%
                       </span>
                     )}
-                  </div>
+                  </Link>
 
                   {/* Product Info */}
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3 text-left">
@@ -326,9 +330,11 @@ export default function Home() {
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                         {prod.brand?.name || 'Laptop'}
                       </span>
-                      <h4 className="font-bold text-sm text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer">
-                        {prod.name}
-                      </h4>
+                      <Link to={`/product/${prod.slug}`} className="block">
+                        <h4 className="font-bold text-sm text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer">
+                          {prod.name}
+                        </h4>
+                      </Link>
                     </div>
 
                     {/* Tech specs info */}

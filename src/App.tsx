@@ -4,8 +4,9 @@ import { CartProvider } from './contexts/CartContext';
 import Header from './components/layout/Header';
 import Home from './pages/client/Home';
 import Cart from './pages/Cart';
+import ProductDetail from './pages/client/Products/ProductDetail';
 import Footer from './components/layout/Footer';
-import Chatbot from './components/info/Chatbot';
+import Chatbot from './components/layout/Chatbot';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/product/:slug" element={<ProductDetail />} />
             </Routes>
           </div>
 
