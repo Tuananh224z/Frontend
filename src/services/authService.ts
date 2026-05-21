@@ -25,17 +25,6 @@ export const authService = {
     return api.put('/auth/change-password', passwordData);
   },
 
-  getWishlist: async () => {
-    return api.get('/auth/wishlist');
-  },
-
-  toggleWishlist: async (productId: string) => {
-    return api.post(`/auth/wishlist/${productId}`);
-  },
-
-  toggleFavorite: async (productId: string) => {
-    return api.post(`/auth/favorites/${productId}`);
-  },
 
   // Admin User APIs
   getUsers: async () => {

@@ -26,7 +26,7 @@ interface ProductType {
   discountPrice?: number;
   images: string[];
   slug: string;
-  specs: SpecsType;
+  specs?: SpecsType;
   brand?: { name: string } | string;
   description: string;
 }
@@ -134,12 +134,12 @@ export default function ProductDetail() {
         ? { name: product.brand.name }
         : undefined;
 
-    const specsObj = {
+    const specsObj = product.specs ? {
       cpu: product.specs.cpu,
       ram: selectedVersion === 'upgrade' ? '32GB' : product.specs.ram,
       storage: selectedVersion === 'upgrade' ? '1TB' : product.specs.storage,
       screenSize: product.specs.screenSize,
-    };
+    } : undefined;
 
     const finalProduct: CartProduct = {
       _id: selectedVersion === 'upgrade' ? `${product._id}_upgrade` : product._id,

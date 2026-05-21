@@ -1,5 +1,4 @@
-import { Star, CheckCircle, Heart, Share2, ShoppingCart, Truck, ShieldCheck, RotateCcw, Plus, Minus } from 'lucide-react';
-import { useState } from 'react';
+import { Star, CheckCircle, Share2, ShoppingCart, Truck, ShieldCheck, RotateCcw, Plus, Minus } from 'lucide-react';
 
 interface SpecsType {
   cpu?: string;
@@ -14,7 +13,7 @@ interface ProductType {
   price: number;
   discountPrice?: number;
   slug: string;
-  specs: SpecsType;
+  specs?: SpecsType;
   brand?: { name: string } | string;
 }
 
@@ -39,7 +38,7 @@ export default function ProductInfo({
   onBuyNow,
   versionPriceDifference
 }: ProductInfoProps) {
-  const [isLiked, setIsLiked] = useState(false);
+
 
   // Formatter for VND
   const formatPrice = (p: number) => {
@@ -64,7 +63,7 @@ export default function ProductInfo({
   const displaySavings = displayOriginalPrice - displayPrice;
 
   // Versions
-  const baseVersionName = `RAM ${product.specs.ram || '16GB'} - SSD ${product.specs.storage || '512GB'}`;
+  const baseVersionName = `RAM ${product.specs?.ram || '16GB'} - SSD ${product.specs?.storage || '512GB'}`;
   const upgradeVersionName = `RAM 32GB - SSD 1TB`;
 
   return (
@@ -125,34 +124,36 @@ export default function ProductInfo({
       </div>
 
       {/* Versions Selector */}
-      <div className="flex flex-col gap-3">
-        <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Phiên bản:</span>
-        <div className="flex flex-wrap gap-3">
-          {/* Base version */}
-          <button
-            onClick={() => setSelectedVersion('base')}
-            className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all text-left cursor-pointer ${
-              selectedVersion === 'base'
-                ? 'border-red-600 text-red-600 bg-red-50/20'
-                : 'border-slate-200 text-slate-700 bg-white hover:border-slate-400'
-            }`}
-          >
-            {baseVersionName}
-          </button>
+      {product.specs && (product.specs.ram || product.specs.storage) && (
+        <div className="flex flex-col gap-3">
+          <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Phiên bản:</span>
+          <div className="flex flex-wrap gap-3">
+            {/* Base version */}
+            <button
+              onClick={() => setSelectedVersion('base')}
+              className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all text-left cursor-pointer ${
+                selectedVersion === 'base'
+                  ? 'border-red-600 text-red-600 bg-red-50/20'
+                  : 'border-slate-200 text-slate-700 bg-white hover:border-slate-400'
+              }`}
+            >
+              {baseVersionName}
+            </button>
 
-          {/* Upgrade version */}
-          <button
-            onClick={() => setSelectedVersion('upgrade')}
-            className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all text-left cursor-pointer ${
-              selectedVersion === 'upgrade'
-                ? 'border-red-600 text-red-600 bg-red-50/20'
-                : 'border-slate-200 text-slate-700 bg-white hover:border-slate-400'
-            }`}
-          >
-            {upgradeVersionName} <span className="text-xs font-semibold text-slate-500 ml-1">+{formatPrice(versionPriceDifference)}</span>
-          </button>
+            {/* Upgrade version */}
+            <button
+              onClick={() => setSelectedVersion('upgrade')}
+              className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all text-left cursor-pointer ${
+                selectedVersion === 'upgrade'
+                  ? 'border-red-600 text-red-600 bg-red-50/20'
+                  : 'border-slate-200 text-slate-700 bg-white hover:border-slate-400'
+              }`}
+            >
+              {upgradeVersionName} <span className="text-xs font-semibold text-slate-500 ml-1">+{formatPrice(versionPriceDifference)}</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Action panel (Quantity, Add to cart, Buy now) */}
       <div className="flex flex-col gap-4 pt-2 border-t border-slate-100">
@@ -183,17 +184,7 @@ export default function ProductInfo({
             <span>Thêm vào giỏ</span>
           </button>
 
-          {/* Wishlist Heart */}
-          <button
-            onClick={() => setIsLiked(!isLiked)}
-            className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all cursor-pointer ${
-              isLiked 
-                ? 'border-rose-200 bg-rose-50 text-rose-500' 
-                : 'border-slate-200 bg-white text-slate-400 hover:text-rose-500 hover:border-rose-200'
-            }`}
-          >
-            <Heart className={`w-5 h-5 ${isLiked ? 'fill-rose-500' : ''}`} />
-          </button>
+
 
           {/* Share button */}
           <button className="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-350 transition-all cursor-pointer">

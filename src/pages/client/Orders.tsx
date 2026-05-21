@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import orderService from '../../services/orderService';
-import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, Loader2 } from 'lucide-react';
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
 
   const fetchOrders = async () => {
@@ -14,12 +13,13 @@ export default function Orders() {
       setIsLoading(true);
       const response = await orderService.getMyOrders();
       if (response.data?.status === 'success') {
-        setOrders(response.data.data);
+        setOrders(response.data.data || []);
       } else {
-        setError('Không thể tải danh sách đơn hàng');
+        setOrders([]);
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Lỗi kết nối server');
+      console.error('Error fetching orders:', err);
+      setOrders([]);
     } finally {
       setIsLoading(false);
     }
@@ -100,20 +100,18 @@ export default function Orders() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex items-center gap-3 mb-8">
-        <Package className="w-8 h-8 text-red-600" />
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Đơn hàng của tôi</h1>
+    <div className="space-y-6">
+      {/* Header section */}
+      <div className="border-b border-slate-100 pb-5">
+        <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Đơn mua</h2>
+        <p className="text-xs text-slate-400 font-bold mt-1">
+          Quản lý và theo dõi trạng thái các đơn hàng đã đặt
+        </p>
       </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-red-600" />
-        </div>
-      ) : error ? (
-        <div className="flex items-center gap-2 p-4 bg-red-50 text-red-650 rounded-2xl border border-red-100 max-w-xl mx-auto">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span className="font-semibold">{error}</span>
         </div>
       ) : orders.length === 0 ? (
         <div className="text-center py-20 bg-white border border-slate-100 rounded-3xl shadow-xs">

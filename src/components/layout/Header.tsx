@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X, User, Package, Heart, MapPin, LayoutGrid, LogOut, LogIn } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User, Package, MapPin, LayoutGrid, LogOut, LogIn } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -10,10 +10,18 @@ export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsMobileMenuOpen(false);
+    }
   };
 
   return (
@@ -42,9 +50,15 @@ export default function Header() {
             <input
               type="text"
               placeholder="Tìm kiếm sản phẩm, thương hiệu..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="w-full pl-6 pr-12 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-full focus:bg-white text-slate-800 focus:border-red-500 outline-hidden transition-all duration-300"
             />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search 
+              onClick={handleSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 cursor-pointer hover:text-red-500 transition-colors" 
+            />
           </div>
 
           {/* Right actions: User avatar and Shopping cart */}
@@ -102,15 +116,6 @@ export default function Header() {
                           >
                             <Package className="w-4.5 h-4.5 text-slate-400" />
                             <span>Đơn hàng của tôi</span>
-                          </Link>
-
-                          <Link 
-                            to="/favorites" 
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold"
-                          >
-                            <Heart className="w-4.5 h-4.5 text-slate-400" />
-                            <span>Sản phẩm yêu thích</span>
                           </Link>
 
                           <Link 
@@ -210,7 +215,10 @@ export default function Header() {
           <div className="flex items-center h-10 sm:h-12">
             <div className="flex items-center gap-8 text-xs sm:text-sm font-bold">
               {/* Danh mục sản phẩm */}
-              <div className="flex items-center gap-2 text-red-650 uppercase tracking-wide cursor-pointer py-2">
+              <div 
+                onClick={() => navigate('/products')}
+                className="flex items-center gap-2 text-red-650 uppercase tracking-wide cursor-pointer py-2 hover:opacity-85 transition-all"
+              >
                 <Menu className="w-4 h-4" />
                 <span>Danh mục sản phẩm</span>
               </div>
@@ -235,9 +243,15 @@ export default function Header() {
             <input
               type="text"
               placeholder="Tìm kiếm sản phẩm, thương hiệu..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="w-full pl-4 pr-10 py-2 text-sm bg-slate-100 text-slate-800 rounded-full border border-transparent focus:border-red-500 outline-hidden"
             />
-            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search 
+              onClick={handleSearch}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 cursor-pointer hover:text-red-500 transition-colors" 
+            />
           </div>
           <nav className="flex flex-col gap-2 font-semibold text-slate-700">
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="px-3 py-2 text-red-650 bg-red-50 rounded-lg">Trang chủ</Link>

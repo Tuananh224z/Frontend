@@ -7,7 +7,7 @@ export interface Product {
   discountPrice?: number;
   images: string[];
   slug: string;
-  specs: {
+  specs?: {
     cpu?: string;
     ram?: string;
     storage?: string;

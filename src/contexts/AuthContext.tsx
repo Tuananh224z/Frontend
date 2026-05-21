@@ -17,7 +17,6 @@ export interface User {
   role: 'customer' | 'admin';
   isActive: boolean;
   address?: Address;
-  favorites?: any[]; // Populated products or IDs
   createdAt?: string;
   updatedAt?: string;
 }
@@ -30,7 +29,6 @@ interface AuthContextType {
   register: (userData: any) => Promise<any>;
   logout: () => void;
   updateProfile: (userData: Partial<User>) => Promise<User>;
-  toggleFavorite: (productId: string) => Promise<any>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -42,7 +40,6 @@ const normalizeUser = (userData: any): User => {
     ...userData,
     _id: userData._id || userData.id,
     fullName: userData.fullName || userData.name || '',
-    favorites: userData.favorites || userData.wishlist || [],
     role: userData.role === 'user' ? 'customer' : userData.role,
   };
 };
@@ -60,15 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const response = await authService.getMe();
         if (response.data && (response.data.id || response.data._id || response.data.email)) {
           userData = normalizeUser(response.data);
-          // Try to fetch populated wishlist
-          try {
-            const wishlistResponse = await authService.getWishlist();
-            if (Array.isArray(wishlistResponse.data)) {
-              userData.favorites = wishlistResponse.data;
-            }
-          } catch (wishlistErr) {
-            console.warn('Failed to fetch wishlist, using default', wishlistErr);
-          }
+
         }
       } catch (err: any) {
         // If /auth/me fails, try /auth/profile
@@ -217,9 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (response.data && (response.data.user || response.data.id || response.data._id || response.data.email)) {
         const returnedUser = response.data.user || response.data;
         const updatedUser = normalizeUser(returnedUser);
-        if (user && user.favorites) {
-          updatedUser.favorites = user.favorites;
-        }
+
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         return updatedUser;
@@ -231,45 +218,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const toggleFavorite = async (productId: string) => {
-    if (!user) {
-      throw new Error('Vui lòng đăng nhập để lưu sản phẩm yêu thích');
-    }
-    try {
-      let response;
-      let wishlistPopulated: any[] | null = null;
-      try {
-        response = await authService.toggleWishlist(productId);
-        const wishlistResponse = await authService.getWishlist();
-        if (Array.isArray(wishlistResponse.data)) {
-          wishlistPopulated = wishlistResponse.data;
-        }
-      } catch (err: any) {
-        if (err.response?.status === 404 || !err.response) {
-          response = await authService.toggleFavorite(productId);
-        } else {
-          throw err;
-        }
-      }
 
-      if (response.data?.status === 'success') {
-        const updatedUser = normalizeUser(response.data.data);
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        return response.data;
-      } else {
-        const updatedUser = {
-          ...user,
-          favorites: wishlistPopulated || response.data.wishlist || []
-        };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        return response.data;
-      }
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || error.message || 'Thao tác thất bại');
-    }
-  };
 
   const refreshProfile = async () => {
     if (token) {
@@ -287,7 +236,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         updateProfile,
-        toggleFavorite,
         refreshProfile,
       }}
     >

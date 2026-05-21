@@ -13,21 +13,22 @@ interface SpecsType {
 
 interface ProductSpecsAndDescProps {
   description: string;
-  specs: SpecsType;
+  specs?: SpecsType;
   productName: string;
 }
 
 export default function ProductSpecsAndDesc({ description, specs, productName }: ProductSpecsAndDescProps) {
   // Specs table key-value pairs
+  const safeSpecs = specs || {};
   const specList = [
-    { label: 'Bộ vi xử lý (CPU)', value: specs.cpu || 'Chưa cập nhật' },
-    { label: 'Bộ nhớ trong (RAM)', value: specs.ram || 'Chưa cập nhật' },
-    { label: 'Ổ cứng (Storage)', value: specs.storage || 'Chưa cập nhật' },
-    { label: 'Card đồ họa (VGA)', value: specs.vga || 'Tích hợp' },
-    { label: 'Màn hình (Screen)', value: specs.screenSize || 'Chưa cập nhật' },
-    { label: 'Dung lượng pin', value: specs.battery || 'Chưa cập nhật' },
-    { label: 'Trọng lượng (Weight)', value: specs.weight ? `${specs.weight} kg` : 'Chưa cập nhật' },
-    { label: 'Hệ điều hành (OS)', value: specs.os || 'Windows 11' },
+    { label: 'Bộ vi xử lý (CPU)', value: safeSpecs.cpu || 'Chưa cập nhật' },
+    { label: 'Bộ nhớ trong (RAM)', value: safeSpecs.ram || 'Chưa cập nhật' },
+    { label: 'Ổ cứng (Storage)', value: safeSpecs.storage || 'Chưa cập nhật' },
+    { label: 'Card đồ họa (VGA)', value: safeSpecs.vga || 'Tích hợp' },
+    { label: 'Màn hình (Screen)', value: safeSpecs.screenSize || 'Chưa cập nhật' },
+    { label: 'Dung lượng pin', value: safeSpecs.battery || 'Chưa cập nhật' },
+    { label: 'Trọng lượng (Weight)', value: safeSpecs.weight ? `${safeSpecs.weight} kg` : 'Chưa cập nhật' },
+    { label: 'Hệ điều hành (OS)', value: safeSpecs.os || 'Windows 11' },
   ];
 
   return (

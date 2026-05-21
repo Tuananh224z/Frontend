@@ -82,15 +82,13 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center font-extrabold text-2xl border border-rose-100 shadow-xs">
-          {user?.fullName ? user.fullName[0].toUpperCase() : 'U'}
-        </div>
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">{user?.fullName}</h1>
-          <p className="text-sm font-medium text-slate-400">Tài khoản khách hàng: {user?.email}</p>
-        </div>
+    <div className="space-y-6">
+      {/* Header section */}
+      <div className="border-b border-slate-100 pb-5">
+        <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Hồ sơ của tôi</h2>
+        <p className="text-xs text-slate-400 font-bold mt-1">
+          Quản lý thông tin hồ sơ để bảo mật tài khoản
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

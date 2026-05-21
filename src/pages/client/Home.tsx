@@ -134,14 +134,16 @@ export default function Home() {
           productService.getBrands()
         ]);
 
-        if (prodRes.data?.data && prodRes.data.data.length > 0) {
-          setProducts(prodRes.data.data.slice(0, 5));
+        const prodData = prodRes.data?.products || prodRes.data?.data || (Array.isArray(prodRes.data) ? prodRes.data : []);
+        if (prodData && prodData.length > 0) {
+          setProducts(prodData.slice(0, 5));
         } else {
           setProducts(mockProducts);
         }
 
-        if (brandRes.data?.data && brandRes.data.data.length > 0) {
-          setBrands(brandRes.data.data);
+        const brandData = brandRes.data?.data || (Array.isArray(brandRes.data) ? brandRes.data : []);
+        if (brandData && brandData.length > 0) {
+          setBrands(brandData);
         } else {
           setBrands(mockBrands);
         }
@@ -278,9 +280,9 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Sản phẩm nổi bật</h2>
             <p className="text-sm text-slate-500 mt-1">Danh sách laptop hàng đầu được khách hàng săn đón nhất</p>
           </div>
-          <button className="flex items-center gap-1 text-sm font-bold text-indigo-600 hover:text-indigo-700 hover:underline transition-all cursor-pointer">
+          <Link to="/products" className="flex items-center gap-1 text-sm font-bold text-indigo-600 hover:text-indigo-700 hover:underline transition-all cursor-pointer">
             Xem tất cả <ChevronRight className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
 
         {isLoading ? (
@@ -341,11 +343,13 @@ export default function Home() {
                     <div className="space-y-1.5 py-2 border-y border-slate-100">
                       <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
                         <Cpu className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                        <span className="line-clamp-1">{prod.specs.cpu || 'Intel / AMD'}</span>
+                        <span className="line-clamp-1">{prod.specs?.cpu || 'Thiết bị phụ kiện'}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
                         <HardDrive className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                        <span className="line-clamp-1">{prod.specs.ram} | {prod.specs.storage}</span>
+                        <span className="line-clamp-1">
+                          {prod.specs ? `${prod.specs.ram || 'N/A'} | ${prod.specs.storage || 'N/A'}` : 'Chính hãng'}
+                        </span>
                       </div>
                     </div>
 
