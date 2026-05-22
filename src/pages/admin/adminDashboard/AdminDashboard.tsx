@@ -2,12 +2,23 @@ import { useState, useEffect } from 'react';
 import chatbotService from '../../../services/chatbotService';
 import { DollarSign, ShoppingCart, Users, MessageSquare, TrendingUp, AlertCircle, Loader2, Award, Compass } from 'lucide-react';
 
+const BACKEND_URL = 'http://localhost:5000';
+
 export default function AdminDashboard() {
   const [summary, setSummary] = useState<any>(null);
   const [chatbot, setChatbot] = useState<any>(null);
   const [userGrowth, setUserGrowth] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const getProductImage = (images: string[]) => {
+    if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    const firstImg = images[0];
+    if (!firstImg) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
+    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+    return `${BACKEND_URL}${cleanPath}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,7 +149,7 @@ export default function AdminDashboard() {
                 <div key={idx} className="flex items-center justify-between gap-4 p-3 bg-slate-950 rounded-2xl border border-slate-800/80">
                   <div className="flex items-center gap-3">
                     <img
-                      src={item.product?.images?.[0]?.startsWith('http') ? item.product.images[0] : `http://localhost:5000${item.product?.images?.[0]}`}
+                      src={getProductImage(item.product?.images)}
                       alt={item.product?.name}
                       className="w-10 h-10 object-contain bg-slate-900 rounded-xl p-1 shrink-0"
                     />
@@ -175,7 +186,7 @@ export default function AdminDashboard() {
                 <div key={idx} className="flex items-center justify-between gap-4 p-3 bg-slate-950 rounded-2xl border border-slate-800/80">
                   <div className="flex items-center gap-3">
                     <img
-                      src={item.product?.images?.[0]?.startsWith('http') ? item.product.images[0] : `http://localhost:5000${item.product?.images?.[0]}`}
+                      src={getProductImage(item.product?.images)}
                       alt={item.product?.name}
                       className="w-10 h-10 object-contain bg-slate-900 rounded-xl p-1 shrink-0"
                     />

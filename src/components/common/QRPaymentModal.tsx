@@ -26,6 +26,33 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
   const pollingIntervalRef = useRef<any>(null);
   const countdownIntervalRef = useRef<any>(null);
 
+  const [isMockPaying, setIsMockPaying] = useState(false);
+
+  const handleConfirmMockPayment = async () => {
+    if (!paymentData?.orderCode) return;
+    setIsMockPaying(true);
+    try {
+      const response = await orderService.mockPayment(paymentData.orderCode);
+      if (response.data?.status === 'success') {
+        if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+        if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+        
+        setPaymentState('success');
+        
+        setTimeout(() => {
+          onPaymentSuccess();
+        }, 2000);
+      } else {
+        alert('Có lỗi xảy ra: ' + (response.data?.message || 'Không thể giả lập thanh toán.'));
+      }
+    } catch (err: any) {
+      console.error('Lỗi giả lập thanh toán:', err);
+      alert(err.response?.data?.message || err.message || 'Lỗi kết nối khi giả lập thanh toán.');
+    } finally {
+      setIsMockPaying(false);
+    }
+  };
+
   // 1. Tải thông tin thanh toán QR từ Backend
   const fetchPaymentInfo = async () => {
     try {
@@ -317,6 +344,27 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
                     <span>Bấm xác nhận chuyển khoản và hoàn tất giao dịch.</span>
                   </li>
                 </ol>
+              </div>
+
+              {/* Demo Confirm Button */}
+              <div className="pt-2">
+                <button
+                  onClick={handleConfirmMockPayment}
+                  disabled={isMockPaying}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 text-white font-extrabold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md shadow-emerald-100 cursor-pointer text-xs uppercase tracking-wider hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  {isMockPaying ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4.5 h-4.5" />
+                      Tôi đã chuyển khoản thành công (Demo)
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Chú ý lưu ý */}

@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react';
 import productService from '../../../services/productService';
 import { Tags, Plus, Search, Edit3, Trash2, CheckCircle2, AlertCircle, Eye, EyeOff, Loader2, Upload, X } from 'lucide-react';
 
+const BACKEND_URL = 'http://localhost:5000';
+
+const getCategoryImage = (img: string) => {
+  if (!img) return '';
+  if (img.startsWith('http://') || img.startsWith('https://')) return img;
+  const cleanPath = img.startsWith('/') ? img : `/${img}`;
+  return `${BACKEND_URL}${cleanPath}`;
+};
+
 export default function AdminCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -262,7 +271,7 @@ export default function AdminCategories() {
                     <td className="px-6 py-4">
                       <div className="w-10 h-10 rounded-xl bg-slate-950 p-1 border border-slate-800 flex items-center justify-center">
                         {cat.image ? (
-                          <img src={cat.image.startsWith('http') ? cat.image : `http://localhost:5000${cat.image}`} alt={cat.name} className="w-full h-full object-contain" />
+                          <img src={getCategoryImage(cat.image)} alt={cat.name} className="w-full h-full object-contain" />
                         ) : (
                           <Tags className="w-5 h-5 text-slate-650" />
                         )}
@@ -367,7 +376,7 @@ export default function AdminCategories() {
                 {image ? (
                   <div className="relative w-full aspect-video rounded-xl bg-slate-950 p-2 border border-slate-800 flex items-center justify-center group overflow-hidden">
                     <img
-                      src={image.startsWith('http') ? image : `http://localhost:5000${image}`}
+                      src={getCategoryImage(image)}
                       alt="Category Preview"
                       className="max-w-full max-h-full object-contain rounded-lg"
                     />

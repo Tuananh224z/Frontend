@@ -3,12 +3,23 @@ import orderService from '../../services/orderService';
 import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, Loader2 } from 'lucide-react';
 import QRPaymentModal from '../../components/common/QRPaymentModal';
 
+const BACKEND_URL = 'http://localhost:5000';
+
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
   const [activeOrderIdForQR, setActiveOrderIdForQR] = useState<string | null>(null);
+
+  const getProductImage = (images: string[]) => {
+    if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    const firstImg = images[0];
+    if (!firstImg) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
+    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+    return `${BACKEND_URL}${cleanPath}`;
+  };
 
   const fetchOrders = async () => {
     try {
@@ -169,7 +180,7 @@ export default function Orders() {
               <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-md sticky top-28 space-y-6">
                 <div className="border-b border-slate-150 pb-4">
                   <h3 className="font-extrabold text-slate-800 text-lg">Chi tiết đơn hàng</h3>
-                  <p className="text-xs text-slate-400 font-semibold mt-1">Mã đơn: #{selectedOrder._id}</p>
+                  <p className="text-xs text-slate-400 font-semibold mt-1">Mã đơn: #{selectedOrder.orderCode || selectedOrder._id}</p>
                 </div>
 
                 {/* Items */}
@@ -179,12 +190,12 @@ export default function Orders() {
                     {selectedOrder.items?.map((item: any, index: number) => (
                       <div key={index} className="flex gap-3 text-sm">
                         <img
-                          src={item.product?.images?.[0]?.startsWith('http') ? item.product.images[0] : `http://localhost:5000${item.product?.images?.[0]}`}
-                          alt={item.product?.name || 'Sản phẩm'}
+                          src={getProductImage(item.product?.images)}
+                          alt={item.name || item.product?.name || 'Sản phẩm'}
                           className="w-12 h-12 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
                         />
                         <div className="flex-grow">
-                          <h5 className="font-bold text-slate-800 line-clamp-1 leading-snug">{item.product?.name || 'Sản phẩm'}</h5>
+                          <h5 className="font-bold text-slate-800 line-clamp-1 leading-snug">{item.name || item.product?.name || 'Sản phẩm'}</h5>
                           <div className="text-xs font-medium text-slate-400 mt-0.5">
                             {formatPrice(item.price)} x {item.quantity}
                           </div>

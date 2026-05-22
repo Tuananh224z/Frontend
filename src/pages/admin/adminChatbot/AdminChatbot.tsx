@@ -3,7 +3,17 @@ import { Link } from 'react-router-dom';
 import chatbotService from '../../../services/chatbotService';
 import { Search, Award, CheckCircle2, AlertCircle, Loader2, ThumbsUp, ThumbsDown, Calendar, Bot, User, Settings, Sparkles, MessageCircle } from 'lucide-react';
 
+const BACKEND_URL = 'http://localhost:5000';
+
 export default function AdminChatbot() {
+  const getProductImage = (images: string[]) => {
+    if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    const firstImg = images[0];
+    if (!firstImg) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+    if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
+    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+    return `${BACKEND_URL}${cleanPath}`;
+  };
   const [sessions, setSessions] = useState<any[]>([]);
   const [popularQuestions, setPopularQuestions] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'sessions' | 'questions' | 'config'>('sessions');
@@ -355,7 +365,7 @@ export default function AdminChatbot() {
                                       {msg.suggestedProducts.map((p: any, idx: number) => (
                                         <div key={idx} className="bg-slate-950 border border-slate-850 rounded-xl p-2 flex items-center gap-2">
                                           <img
-                                            src={p.images?.[0]?.startsWith('http') ? p.images[0] : `http://localhost:5000${p.images?.[0]}`}
+                                            src={getProductImage(p.images)}
                                             alt={p.name}
                                             className="w-8 h-8 object-contain bg-slate-900 rounded-lg p-0.5"
                                           />

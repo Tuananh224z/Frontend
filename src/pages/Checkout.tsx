@@ -21,6 +21,7 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
+  const [isOrdered, setIsOrdered] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -31,10 +32,10 @@ export default function Checkout() {
 
   // Redirect to cart if cart is empty (and we haven't just created an order)
   useEffect(() => {
-    if (!authLoading && cartItems.length === 0 && !createdOrderId) {
+    if (!authLoading && cartItems.length === 0 && !createdOrderId && !isOrdered) {
       navigate('/cart');
     }
-  }, [cartItems, authLoading, navigate, createdOrderId]);
+  }, [cartItems, authLoading, navigate, createdOrderId, isOrdered]);
 
   if (authLoading || !user) {
     return (
@@ -103,6 +104,7 @@ export default function Checkout() {
       const response = await orderService.createOrder(orderPayload);
       if (response.data?.status === 'success') {
         const newOrder = response.data.data;
+        setIsOrdered(true);
         
         if (paymentMethod === 'COD') {
           // Clear local cart

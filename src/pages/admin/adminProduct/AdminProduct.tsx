@@ -42,6 +42,18 @@ const convertSpecsToGroups = (specs: any) => {
   return [];
 };
 
+const BACKEND_URL = 'http://localhost:5000';
+
+const getProductImage = (images: string[] | string) => {
+  const imgArray = Array.isArray(images) ? images : (images ? [images] : []);
+  if (imgArray.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+  const firstImg = imgArray[0];
+  if (!firstImg) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
+  if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
+  const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+  return `${BACKEND_URL}${cleanPath}`;
+};
+
 export default function AdminProduct() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -695,7 +707,7 @@ export default function AdminProduct() {
                       className="relative aspect-square bg-slate-950 border border-slate-850 rounded-xl overflow-hidden group p-1.5 flex items-center justify-center"
                     >
                       <img
-                        src={img.startsWith('http') ? img : `http://localhost:5000${img}`}
+                        src={getProductImage(img)}
                         alt="preview"
                         className="max-w-full max-h-full object-contain rounded-lg"
                       />
@@ -1058,11 +1070,7 @@ export default function AdminProduct() {
                         <td className="px-6 py-4">
                           <div className="w-10 h-10 rounded-xl bg-slate-950 p-1 border border-slate-800 flex items-center justify-center">
                             <img
-                              src={
-                                product.images?.[0]?.startsWith('http')
-                                  ? product.images[0]
-                                  : `http://localhost:5000${product.images?.[0]}`
-                              }
+                              src={getProductImage(product.images)}
                               alt={product.name}
                               className="w-full h-full object-contain rounded-lg"
                             />

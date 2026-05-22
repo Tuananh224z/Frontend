@@ -8,6 +8,17 @@ export interface Address {
   city: string;
 }
 
+export interface UserAddress {
+  _id?: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  ward: string;
+  district: string;
+  city: string;
+  isDefault: boolean;
+}
+
 export interface User {
   _id: string;
   email: string;
@@ -17,6 +28,7 @@ export interface User {
   role: 'customer' | 'admin';
   isActive: boolean;
   address?: Address;
+  addresses?: UserAddress[];
   createdAt?: string;
   updatedAt?: string;
 }

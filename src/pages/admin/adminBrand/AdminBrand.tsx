@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react';
 import productService from '../../../services/productService';
 import { Copyright, Plus, Search, Edit3, Trash2, CheckCircle2, Eye, EyeOff, Loader2, AlertCircle, Upload, X } from 'lucide-react';
 
+const BACKEND_URL = 'http://localhost:5000';
+
+const getBrandLogo = (img: string) => {
+  if (!img) return '';
+  if (img.startsWith('http://') || img.startsWith('https://')) return img;
+  const cleanPath = img.startsWith('/') ? img : `/${img}`;
+  return `${BACKEND_URL}${cleanPath}`;
+};
+
 export default function AdminBrand() {
   const [brands, setBrands] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -263,7 +272,7 @@ export default function AdminBrand() {
                     <td className="px-6 py-4">
                       <div className="w-10 h-10 rounded-xl bg-slate-950 p-1.5 border border-slate-800 flex items-center justify-center">
                         {brand.logo ? (
-                          <img src={brand.logo.startsWith('http') ? brand.logo : `http://localhost:5000${brand.logo}`} alt={brand.name} className="w-full h-full object-contain" />
+                          <img src={getBrandLogo(brand.logo)} alt={brand.name} className="w-full h-full object-contain" />
                         ) : (
                           <Copyright className="w-5 h-5 text-slate-600" />
                         )}
@@ -368,7 +377,7 @@ export default function AdminBrand() {
                 {logo ? (
                   <div className="relative w-full aspect-video rounded-xl bg-slate-950 p-2 border border-slate-800 flex items-center justify-center group overflow-hidden">
                     <img
-                      src={logo.startsWith('http') ? logo : `http://localhost:5000${logo}`}
+                      src={getBrandLogo(logo)}
                       alt="Brand Logo Preview"
                       className="max-w-full max-h-full object-contain rounded-lg"
                     />

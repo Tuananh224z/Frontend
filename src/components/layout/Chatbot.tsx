@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Link } from 'react-router-dom';
 import chatbotService from '../../services/chatbotService';
-import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SuggestedProduct {
@@ -40,30 +40,24 @@ export default function Chatbot() {
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Lấy hoặc tạo sessionToken mới lưu vào localStorage
-  const getSessionToken = () => {
-    let token = localStorage.getItem('chatSessionToken');
+  // Lấy hoặc tạo sessionToken mới lưu vào localStorage dựa trên user
+  const [sessionToken, setSessionToken] = useState('');
+
+  useEffect(() => {
+    const key = user?._id ? `chatSessionToken_${user._id}` : 'chatSessionToken_guest';
+    let token = localStorage.getItem(key);
     if (!token) {
       token = `session-${Math.random().toString(36).substring(2, 15)}-${Date.now()}`;
-      localStorage.setItem('chatSessionToken', token);
+      localStorage.setItem(key, token);
     }
-    return token;
-  };
-
-  const [sessionToken, setSessionToken] = useState(() => getSessionToken());
-
-  const handleResetChat = () => {
-    if (window.confirm("Bạn có chắc chắn muốn làm mới cuộc trò chuyện này không? Lịch sử chat cũ sẽ bị xóa.")) {
-      const newToken = `session-${Math.random().toString(36).substring(2, 15)}-${Date.now()}`;
-      localStorage.setItem('chatSessionToken', newToken);
-      setSessionToken(newToken);
-      setMessages([]);
-      setFeedback(null);
-    }
-  };
+    setSessionToken(token);
+  }, [user?._id]);
 
   // Khởi tạo Socket.io & Tải lịch sử tin nhắn
   useEffect(() => {
+    if (!sessionToken) return;
+    setMessages([]);
+
     // 1. Tải lịch sử chat
     const fetchHistory = async () => {
       try {
@@ -310,13 +304,6 @@ export default function Chatbot() {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <button
-                onClick={handleResetChat}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                title="Làm mới cuộc trò chuyện"
-              >
-                <RotateCcw className="w-4.5 h-4.5 text-indigo-200 hover:text-white" />
-              </button>
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
