@@ -27,6 +27,10 @@ export const orderService = {
 
   getQRPayment: async (orderId: string) => {
     return api.get(`/orders/${orderId}/qr-payment?t=${Date.now()}`);
+  },
+
+  mockPayment: async (orderCode: string) => {
+    return api.post('/payment/mock-pay', { orderCode });
   }
 };
 
