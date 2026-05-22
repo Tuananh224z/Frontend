@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import orderService from '../../services/orderService';
 import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, Loader2 } from 'lucide-react';
 import QRPaymentModal from '../../components/common/QRPaymentModal';
@@ -187,21 +188,42 @@ export default function Orders() {
                 <div className="space-y-3">
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Danh sách sản phẩm</h4>
                   <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                    {selectedOrder.items?.map((item: any, index: number) => (
-                      <div key={index} className="flex gap-3 text-sm">
-                        <img
-                          src={getProductImage(item.product?.images)}
-                          alt={item.name || item.product?.name || 'Sản phẩm'}
-                          className="w-12 h-12 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
-                        />
-                        <div className="flex-grow">
-                          <h5 className="font-bold text-slate-800 line-clamp-1 leading-snug">{item.name || item.product?.name || 'Sản phẩm'}</h5>
-                          <div className="text-xs font-medium text-slate-400 mt-0.5">
-                            {formatPrice(item.price)} x {item.quantity}
+                    {selectedOrder.items?.map((item: any, index: number) => {
+                      const itemContent = (
+                        <>
+                          <img
+                            src={getProductImage(item.product?.images)}
+                            alt={item.name || item.product?.name || 'Sản phẩm'}
+                            className="w-12 h-12 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                          />
+                          <div className="flex-grow">
+                            <h5 className="font-bold text-slate-800 line-clamp-1 leading-snug hover:text-purple-600 transition-colors">
+                              {item.name || item.product?.name || 'Sản phẩm'}
+                            </h5>
+                            <div className="text-xs font-medium text-slate-400 mt-0.5">
+                              {formatPrice(item.price)} x {item.quantity}
+                            </div>
+                            <span className="inline-block text-[10px] text-purple-600 hover:underline font-bold mt-1">
+                              Click để đánh giá sản phẩm này
+                            </span>
                           </div>
+                        </>
+                      );
+
+                      return item.product?.slug ? (
+                        <Link 
+                          key={index} 
+                          to={`/product/${item.product.slug}`} 
+                          className="flex gap-3 text-sm hover:bg-slate-50/80 p-1.5 rounded-xl transition-all w-full text-left"
+                        >
+                          {itemContent}
+                        </Link>
+                      ) : (
+                        <div key={index} className="flex gap-3 text-sm p-1.5">
+                          {itemContent}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 

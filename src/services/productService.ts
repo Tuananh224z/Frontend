@@ -71,6 +71,14 @@ export const productService = {
 
   updateReviewStatus: async (id: string, isActive: boolean) => {
     return api.put(`/reviews/${id}/status`, { isActive });
+  },
+
+  getProductReviews: async (productId: string) => {
+    return api.get(`/reviews/product/${productId}`);
+  },
+
+  createReview: async (payload: { product: string; rating: number; comment: string }) => {
+    return api.post('/reviews', payload);
   }
 };
 

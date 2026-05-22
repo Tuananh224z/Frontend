@@ -213,7 +213,7 @@ export default function ProductDetail() {
         />
 
         {/* Product Reviews */}
-        <ProductReviews />
+        <ProductReviews productId={product._id} />
 
       </div>
     </main>
