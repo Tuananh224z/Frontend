@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import chatbotService from '../../../services/chatbotService';
 import productService from '../../../services/productService';
-import { Settings, Info, Phone, Mail, MapPin, Link2, Plus, Trash2, CheckCircle2, AlertCircle, Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Settings, Info, Phone, Mail, MapPin, Link2, Plus, Trash2, CheckCircle2, AlertCircle, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 
 const BACKEND_URL = 'http://localhost:5000';
 

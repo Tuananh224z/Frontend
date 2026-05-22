@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Star, Loader2, MessageSquare, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import productService from '../../../services/productService';
-import orderService from '../../../services/orderService';
 import { Link } from 'react-router-dom';
 
 interface ProductReviewsProps {
@@ -326,6 +325,35 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                     <p className="text-sm font-semibold text-slate-650 leading-relaxed whitespace-pre-line pr-2">
                       {rev.comment}
                     </p>
+
+                    {/* Admin Reply */}
+                    {rev.adminReply && (
+                      <div className="mt-3 bg-slate-50 border border-slate-200/40 rounded-2xl p-4 relative">
+                        <div className="absolute -top-2 left-6 w-3 h-3 bg-slate-50 border-t border-l border-slate-200/40 transform rotate-45"></div>
+                        <div className="flex items-center justify-between mb-1.5 relative z-10">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-[10px] font-extrabold uppercase">
+                              Quản trị viên
+                            </span>
+                            <span className="font-extrabold text-slate-800 text-xs">
+                              Phản hồi từ TechStore
+                            </span>
+                          </div>
+                          {rev.adminRepliedAt && (
+                            <span className="text-[10px] font-semibold text-slate-400">
+                              {new Date(rev.adminRepliedAt).toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs font-semibold text-slate-650 leading-relaxed whitespace-pre-line relative z-10 pl-1">
+                          {rev.adminReply}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

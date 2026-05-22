@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import productService from '../../services/productService';
-import chatbotService from '../../services/chatbotService';
 import { ShoppingCart, Star, Cpu, HardDrive, Smartphone, ChevronRight } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 
@@ -39,7 +38,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [systemSettings, setSystemSettings] = useState<any>(null);
+
 
   // Dữ liệu mẫu (fallback) để đảm bảo giao diện luôn hiển thị tuyệt đẹp
   const mockProducts: Product[] = [
@@ -128,30 +127,15 @@ export default function Home() {
     { _id: 'b6', name: 'Lenovo', description: 'Bàn phím hoàn hảo, tối ưu trải nghiệm.' }
   ];
 
-  const getBannerImageUrl = (path?: string) => {
-    if (!path) return '';
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return `${BACKEND_URL}${cleanPath}`;
-  };
 
-  const getCategoryColor = (category?: string) => {
-    if (!category) return 'text-purple-400';
-    const cat = category.toLowerCase();
-    if (cat.includes('game') || cat.includes('đồ họa') || cat.includes('gaming')) return 'text-rose-400';
-    if (cat.includes('văn phòng') || cat.includes('sinh viên') || cat.includes('office')) return 'text-emerald-400';
-    if (cat.includes('workstation') || cat.includes('creator') || cat.includes('trạm')) return 'text-amber-400';
-    return 'text-indigo-400';
-  };
 
   // Fetch dữ liệu từ API Backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [prodRes, brandRes, settingsRes] = await Promise.all([
+        const [prodRes, brandRes] = await Promise.all([
           productService.getProducts({ limit: 5 }),
-          productService.getBrands(),
-          chatbotService.getSystemSettings().catch(() => null)
+          productService.getBrands()
         ]);
 
         const prodData = prodRes.data?.products || prodRes.data?.data || (Array.isArray(prodRes.data) ? prodRes.data : []);
@@ -168,9 +152,7 @@ export default function Home() {
           setBrands(mockBrands);
         }
 
-        if (settingsRes && settingsRes.data?.status === 'success') {
-          setSystemSettings(settingsRes.data.data);
-        }
+
       } catch (err) {
         console.warn('Lỗi kết nối API Backend, đang hiển thị dữ liệu mẫu:', err);
         setProducts(mockProducts);
