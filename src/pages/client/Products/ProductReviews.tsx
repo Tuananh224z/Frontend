@@ -20,6 +20,8 @@ interface ReviewType {
   rating: number;
   comment: string;
   createdAt: string;
+  adminReply?: string;
+  adminRepliedAt?: string;
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {

@@ -73,6 +73,10 @@ export const productService = {
     return api.put(`/reviews/${id}/status`, { isActive });
   },
 
+  replyReview: async (id: string, adminReply: string) => {
+    return api.put(`/reviews/${id}/reply`, { adminReply });
+  },
+
   getProductReviews: async (productId: string) => {
     return api.get(`/reviews/product/${productId}`);
   },

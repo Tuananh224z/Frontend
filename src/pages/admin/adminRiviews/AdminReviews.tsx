@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import productService from '../../../services/productService';
-import { Star, Search, CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import { Star, Search, CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MessageSquare, X } from 'lucide-react';
 
 export default function AdminReviews() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -11,6 +11,12 @@ export default function AdminReviews() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [actionId, setActionId] = useState<string | null>(null);
+
+  // Reply Modal States
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<any | null>(null);
+  const [adminReplyText, setAdminReplyText] = useState('');
+  const [isReplying, setIsReplying] = useState(false);
 
   const fetchReviews = async () => {
     try {
@@ -47,6 +53,38 @@ export default function AdminReviews() {
       setError(err.response?.data?.message || err.message || 'Cập nhật trạng thái đánh giá thất bại');
     } finally {
       setActionId(null);
+    }
+  };
+
+  const handleOpenReplyModal = (rev: any) => {
+    setSelectedReview(rev);
+    setAdminReplyText(rev.adminReply || '');
+    setIsReplyModalOpen(true);
+  };
+
+  const handleSendReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedReview) return;
+    if (!adminReplyText.trim()) {
+      setError('Vui lòng nhập nội dung phản hồi');
+      return;
+    }
+
+    try {
+      setIsReplying(true);
+      setError('');
+      setSuccess('');
+      const response = await productService.replyReview(selectedReview._id, adminReplyText);
+
+      if (response.data?.status === 'success') {
+        setSuccess('Phản hồi đánh giá thành công!');
+        setIsReplyModalOpen(false);
+        fetchReviews();
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Gửi phản hồi thất bại');
+    } finally {
+      setIsReplying(false);
     }
   };
 
@@ -161,7 +199,7 @@ export default function AdminReviews() {
                   <th className="px-6 py-4">Nội dung bình luận</th>
                   <th className="px-6 py-4">Ngày đánh giá</th>
                   <th className="px-6 py-4">Trạng thái</th>
-                  <th className="px-6 py-4 text-right">Ẩn / Hiện</th>
+                  <th className="px-6 py-4 text-right">Hành động</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-850">
@@ -198,7 +236,16 @@ export default function AdminReviews() {
 
                     {/* Comment */}
                     <td className="px-6 py-4 text-xs font-medium text-slate-300 max-w-sm whitespace-normal break-words">
-                      {rev.comment}
+                      <div>{rev.comment}</div>
+                      {rev.adminReply && (
+                        <div className="mt-2 p-2 bg-slate-950/50 rounded-lg border border-slate-800 text-[11px]">
+                          <span className="text-purple-400 font-bold">Phản hồi của Admin: </span>
+                          <span className="text-slate-400 font-medium">{rev.adminReply}</span>
+                          <span className="text-[9px] text-slate-500 font-medium block mt-1">
+                            {formatDate(rev.adminRepliedAt || rev.updatedAt)}
+                          </span>
+                        </div>
+                      )}
                     </td>
 
                     {/* Date */}
@@ -214,25 +261,98 @@ export default function AdminReviews() {
                       </span>
                     </td>
 
-                    {/* Action - Hide/Show */}
+                    {/* Action - Reply & Hide/Show */}
                     <td className="px-6 py-4 text-right">
-                      <button
-                        disabled={actionId === rev._id}
-                        onClick={() => handleToggleStatus(rev)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer select-none border-slate-800 hover:border-purple-900 ${rev.isActive
-                            ? 'text-red-400 hover:bg-red-950/20 bg-slate-900'
-                            : 'text-emerald-400 hover:bg-emerald-950/20 bg-slate-900'
-                          }`}
-                        title={rev.isActive ? 'Ẩn bình luận vi phạm' : 'Kích hoạt lại hiển thị'}
-                      >
-                        {rev.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                        <span>{rev.isActive ? 'Ẩn đi' : 'Hiển thị'}</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleOpenReplyModal(rev)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-800 hover:border-purple-900 text-purple-400 hover:bg-purple-950/20 bg-slate-900 cursor-pointer select-none"
+                          title="Phản hồi đánh giá"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{rev.adminReply ? 'Sửa PH' : 'Phản hồi'}</span>
+                        </button>
+                        <button
+                          disabled={actionId === rev._id}
+                          onClick={() => handleToggleStatus(rev)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer select-none border-slate-800 hover:border-purple-900 ${rev.isActive
+                              ? 'text-red-400 hover:bg-red-950/20 bg-slate-900'
+                              : 'text-emerald-400 hover:bg-emerald-950/20 bg-slate-900'
+                            }`}
+                          title={rev.isActive ? 'Ẩn bình luận vi phạm' : 'Kích hoạt lại hiển thị'}
+                        >
+                          {rev.isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          <span>{rev.isActive ? 'Ẩn đi' : 'Hiển thị'}</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {isReplyModalOpen && selectedReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 space-y-6 shadow-2xl relative">
+            <div className="border-b border-slate-850 pb-3 flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-white">
+                Phản hồi đánh giá sản phẩm
+              </h3>
+              <button
+                onClick={() => setIsReplyModalOpen(false)}
+                className="text-slate-400 hover:text-white transition-colors bg-transparent border-0 cursor-pointer p-1 rounded-lg hover:bg-slate-850 flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 text-xs text-slate-350">
+                <div className="flex justify-between font-bold mb-1 text-slate-400">
+                  <span>Khách hàng: {selectedReview.user?.fullName || 'Khách hàng ẩn'}</span>
+                  <span>⭐ {selectedReview.rating}/5</span>
+                </div>
+                <p className="italic text-slate-400 font-medium">"{selectedReview.comment}"</p>
+              </div>
+
+              <form onSubmit={handleSendReply} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                    Nội dung phản hồi từ TechStore <span className="text-purple-400">*</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={adminReplyText}
+                    onChange={(e) => setAdminReplyText(e.target.value)}
+                    placeholder="Cảm ơn bạn đã phản hồi về sản phẩm..."
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200 resize-none"
+                  />
+                </div>
+
+                {/* Actions Buttons */}
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-850">
+                  <button
+                    type="button"
+                    onClick={() => setIsReplyModalOpen(false)}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-extrabold rounded-xl text-xs transition-colors border-0 cursor-pointer"
+                  >
+                    Hủy bỏ
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isReplying || !adminReplyText.trim()}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl text-xs transition-colors border-0 shadow-lg shadow-purple-550/15 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isReplying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Gửi phản hồi'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
