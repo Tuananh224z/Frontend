@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import chatbotService from '../../../services/chatbotService';
 import { Search, Award, CheckCircle2, AlertCircle, Loader2, ThumbsUp, ThumbsDown, Calendar, Bot, User, Settings, Sparkles, MessageCircle } from 'lucide-react';
 
@@ -125,6 +126,60 @@ export default function AdminChatbot() {
       session.sessionToken.toLowerCase().includes(search.toLowerCase());
     return userMatches;
   });
+
+  // Helper to parse simple markdown links [text](url) and style them
+  const formatMessageText = (text: string) => {
+    if (!text) return '';
+    
+    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts: any[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      const matchIndex = match.index;
+      
+      if (matchIndex > lastIndex) {
+        parts.push(text.substring(lastIndex, matchIndex));
+      }
+      
+      const linkText = match[1];
+      const linkUrl = match[2];
+      const isInternal = linkUrl.startsWith('/');
+      
+      if (isInternal) {
+        parts.push(
+          <Link
+            key={`link-${matchIndex}`}
+            to={linkUrl}
+            className="text-purple-400 hover:text-purple-300 font-extrabold underline underline-offset-2 hover:decoration-purple-300 transition-colors duration-200"
+          >
+            {linkText}
+          </Link>
+        );
+      } else {
+        parts.push(
+          <a
+            key={`link-${matchIndex}`}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-400 hover:text-purple-300 font-extrabold underline underline-offset-2 hover:decoration-purple-300 transition-colors duration-200"
+          >
+            {linkText}
+          </a>
+        );
+      }
+      
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
 
   return (
     <div className="space-y-6">
@@ -282,11 +337,11 @@ export default function AdminChatbot() {
 
                               {/* Message bubble */}
                               <div className="space-y-1.5">
-                                <div className={`p-3.5 rounded-2xl text-xs font-medium leading-relaxed ${isBot
+                                <div className={`p-3.5 rounded-2xl text-xs font-medium leading-relaxed whitespace-pre-wrap ${isBot
                                   ? 'bg-slate-955 bg-slate-950 border border-slate-850 text-slate-200 rounded-tl-none'
                                   : 'bg-purple-650 bg-purple-600 text-white rounded-tr-none'
                                   }`}>
-                                  {msg.text}
+                                  {formatMessageText(msg.text)}
                                 </div>
                                 <span className="text-[9px] text-slate-500 font-bold block text-right px-1">
                                   {new Date(msg.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}

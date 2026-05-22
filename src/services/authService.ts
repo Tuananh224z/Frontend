@@ -31,6 +31,10 @@ export const authService = {
     return api.get('/users');
   },
 
+  createUserAdmin: async (userData: any) => {
+    return api.post('/users', userData);
+  },
+
   toggleUserLock: async (userId: string) => {
     return api.put(`/users/${userId}/toggle-lock`);
   },

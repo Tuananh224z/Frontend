@@ -19,8 +19,12 @@ export default function AdminLayout() {
   }
 
   // Check auth and role
-  if (!user || user.role !== 'admin') {
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (user.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
 
   const menuItems = [
@@ -94,7 +98,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Workspace Area */}
-      <main className="flex-1 flex flex-col min-h-0 bg-slate-950">
+      <main className="flex-1 flex flex-col min-h-0 min-w-0 bg-slate-950">
         {/* Top Header */}
         <header className="h-20 bg-slate-900/60 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-8 z-10 shrink-0">
           <div className="flex items-center gap-2">
@@ -108,13 +112,13 @@ export default function AdminLayout() {
               <div className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">{user.role}</div>
             </div>
             <div className="w-10 h-10 bg-purple-950 text-purple-450 border border-purple-900 rounded-full flex items-center justify-center font-extrabold text-sm select-none text-purple-400">
-              {user.fullName[0].toUpperCase()}
+              {user?.fullName ? user.fullName[0].toUpperCase() : 'A'}
             </div>
           </div>
         </header>
 
         {/* Content Outlet */}
-        <div className="flex-1 p-8 overflow-y-auto min-h-0">
+        <div className="flex-1 p-8 overflow-y-auto min-h-0 min-w-0 w-full">
           <Outlet />
         </div>
       </main>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import authService from '../../../services/authService';
-import { Users, Search, Shield, UserX, UserCheck, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin } from 'lucide-react';
+import { Users, Search, Shield, UserX, UserCheck, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X } from 'lucide-react';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
@@ -13,6 +13,20 @@ export default function AdminUsers() {
 
   // Lock/Unlock saving states
   const [actionUserId, setActionUserId] = useState<string | null>(null);
+
+  // New user creation states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newFullName, setNewFullName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [newRole, setNewRole] = useState('customer');
+  const [newStreet, setNewStreet] = useState('');
+  const [newWard, setNewWard] = useState('');
+  const [newDistrict, setNewDistrict] = useState('');
+  const [newCity, setNewCity] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalError, setModalError] = useState('');
 
   const fetchUsers = async () => {
     try {
@@ -77,6 +91,50 @@ export default function AdminUsers() {
     }
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newFullName || !newEmail || !newPassword) {
+      setModalError('Vui lòng điền đầy đủ các thông tin bắt buộc (Họ tên, Email, Mật khẩu)');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      setModalError('');
+      const response = await authService.createUserAdmin({
+        fullName: newFullName,
+        email: newEmail,
+        password: newPassword,
+        phone: newPhone,
+        role: newRole,
+        address: {
+          street: newStreet,
+          ward: newWard,
+          district: newDistrict,
+          city: newCity
+        }
+      });
+      if (response.data?.status === 'success' || response.status === 201) {
+        setSuccess('Đã thêm thành viên mới thành công!');
+        // Reset form
+        setNewFullName('');
+        setNewEmail('');
+        setNewPassword('');
+        setNewPhone('');
+        setNewRole('customer');
+        setNewStreet('');
+        setNewWard('');
+        setNewDistrict('');
+        setNewCity('');
+        setIsModalOpen(false);
+        fetchUsers();
+      }
+    } catch (err: any) {
+      setModalError(err.response?.data?.message || err.message || 'Không thể tạo tài khoản người dùng');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'N/A';
     return new Date(dateStr).toLocaleDateString('vi-VN', {
@@ -88,10 +146,14 @@ export default function AdminUsers() {
 
   // Filter users
   const filteredUsers = users.filter((user) => {
+    const fullName = user.fullName || '';
+    const email = user.email || '';
+    const phone = user.phone || '';
+
     const matchesSearch =
-      user.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase()) ||
-      (user.phone && user.phone.includes(search));
+      fullName.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase()) ||
+      phone.includes(search);
 
     const matchesRole = roleFilter === 'All' || user.role === roleFilter;
     const matchesStatus =
@@ -105,7 +167,7 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       {/* Search and Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <input
@@ -118,8 +180,8 @@ export default function AdminUsers() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-3">
+        {/* Filters and Add Button */}
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Vai trò:</span>
             <select
@@ -145,6 +207,14 @@ export default function AdminUsers() {
               <option value="Locked">Bị khóa</option>
             </select>
           </div>
+
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl text-xs transition-all shadow-sm select-none border-0 cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>Thêm thành viên</span>
+          </button>
         </div>
       </div>
 
@@ -175,51 +245,55 @@ export default function AdminUsers() {
       ) : (
         <div className="bg-slate-900 rounded-3xl border border-slate-800/80 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 text-[10px] uppercase tracking-wider text-slate-450 font-bold bg-slate-900/50">
-                  <th className="px-6 py-4">Avatar</th>
-                  <th className="px-6 py-4">Họ và tên</th>
-                  <th className="px-6 py-4">Thông tin liên lạc</th>
-                  <th className="px-6 py-4">Địa chỉ chính</th>
-                  <th className="px-6 py-4">Vai trò</th>
-                  <th className="px-6 py-4">Ngày đăng ký</th>
-                  <th className="px-6 py-4">Trạng thái</th>
-                  <th className="px-6 py-4 text-right">Phân quyền / Khóa</th>
+                <tr className="border-b border-slate-800 text-[10px] uppercase tracking-wider text-slate-400 font-bold bg-slate-900/50">
+                  <th className="px-3 py-2.5">Thành viên</th>
+                  <th className="px-3 py-2.5">Liên hệ</th>
+                  <th className="px-3 py-2.5">Địa chỉ</th>
+                  <th className="px-3 py-2.5">Vai trò</th>
+                  <th className="px-3 py-2.5">Đăng ký</th>
+                  <th className="px-3 py-2.5">Trạng thái</th>
+                  <th className="px-3 py-2.5 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-850">
                 {filteredUsers.map((userObj) => {
                   const hasAddress = userObj.address && (userObj.address.street || userObj.address.ward || userObj.address.city);
+                  const fullAddressStr = hasAddress
+                    ? [userObj.address.street, userObj.address.ward, userObj.address.district, userObj.address.city]
+                        .filter(Boolean)
+                        .join(', ')
+                    : '';
                   return (
                     <tr key={userObj._id} className="hover:bg-slate-850/40 transition-colors text-sm">
-                      {/* Avatar */}
-                      <td className="px-6 py-4">
-                        <div className="w-10 h-10 rounded-full bg-purple-950 border border-purple-900 flex items-center justify-center font-extrabold text-sm text-purple-400 overflow-hidden">
-                          {userObj.avatar ? (
-                            <img src={userObj.avatar} alt={userObj.fullName} className="w-full h-full object-cover" />
-                          ) : (
-                            userObj.fullName[0].toUpperCase()
-                          )}
+                      {/* Member Info (Avatar + Name + ID) */}
+                      <td className="px-3 py-2.5">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-purple-950 border border-purple-900 flex items-center justify-center font-extrabold text-xs text-purple-400 overflow-hidden shrink-0">
+                            {userObj.avatar ? (
+                              <img src={userObj.avatar} alt={userObj.fullName} className="w-full h-full object-cover" />
+                            ) : (
+                              userObj.fullName ? userObj.fullName[0].toUpperCase() : 'U'
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-extrabold text-white text-xs leading-tight">{userObj.fullName || 'Chưa đặt tên'}</div>
+                            <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">ID: {userObj._id.slice(-6)}</div>
+                          </div>
                         </div>
                       </td>
 
-                      {/* Full Name */}
-                      <td className="px-6 py-4">
-                        <div className="font-extrabold text-white">{userObj.fullName}</div>
-                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">ID: {userObj._id.slice(-6)}</div>
-                      </td>
-
-                      {/* Contact Info */}
-                      <td className="px-6 py-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 text-xs text-slate-350">
-                            <Mail className="w-3.5 h-3.5 text-slate-500" />
-                            <span>{userObj.email}</span>
+                      {/* Contact Info (Email + Phone) */}
+                      <td className="px-3 py-2.5">
+                        <div className="space-y-0.5 max-w-[160px]">
+                          <div className="flex items-center gap-1.5 text-xs text-slate-350" title={userObj.email}>
+                            <Mail className="w-3 h-3 text-slate-500 shrink-0" />
+                            <span className="truncate">{userObj.email}</span>
                           </div>
                           {userObj.phone && (
                             <div className="flex items-center gap-1.5 text-xs text-slate-350">
-                              <Phone className="w-3.5 h-3.5 text-slate-500" />
+                              <Phone className="w-3 h-3 text-slate-500 shrink-0" />
                               <span>{userObj.phone}</span>
                             </div>
                           )}
@@ -227,73 +301,69 @@ export default function AdminUsers() {
                       </td>
 
                       {/* Address */}
-                      <td className="px-6 py-4 text-xs font-semibold text-slate-400 max-w-xs truncate">
+                      <td className="px-3 py-2.5 text-xs font-semibold text-slate-400 max-w-[130px]" title={fullAddressStr}>
                         {hasAddress ? (
                           <div className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-                            <span className="truncate">
-                              {[userObj.address.street, userObj.address.ward, userObj.address.district, userObj.address.city]
-                                .filter(Boolean)
-                                .join(', ')}
-                            </span>
+                            <MapPin className="w-3 h-3 text-purple-500 shrink-0" />
+                            <span className="truncate">{fullAddressStr}</span>
                           </div>
                         ) : (
-                          <span className="text-slate-600 font-medium">Chưa cập nhật địa chỉ</span>
+                          <span className="text-slate-650 font-medium text-xs">Chưa cập nhật</span>
                         )}
                       </td>
 
                       {/* Role */}
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full border ${userObj.role === 'admin'
+                      <td className="px-3 py-2.5">
+                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${userObj.role === 'admin'
                             ? 'text-purple-400 bg-purple-950/20 border-purple-900/40'
-                            : 'text-blue-450 text-blue-450/80 bg-blue-950/10 border-blue-900/30 text-blue-400'
+                            : 'text-blue-400 bg-blue-950/10 border-blue-900/30'
                           }`}>
-                          <Shield className="w-3 h-3" />
-                          <span>{userObj.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'}</span>
+                          <Shield className="w-2 h-2" />
+                          <span>{userObj.role === 'admin' ? 'Quản trị' : 'Khách hàng'}</span>
                         </span>
                       </td>
 
                       {/* Created At */}
-                      <td className="px-6 py-4 text-xs font-semibold text-slate-450">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <td className="px-3 py-2.5 text-xs font-semibold text-slate-400">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-slate-500 shrink-0" />
                           <span>{formatDate(userObj.createdAt)}</span>
                         </div>
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full border ${userObj.isActive
+                      <td className="px-3 py-2.5">
+                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${userObj.isActive
                             ? 'text-emerald-400 bg-emerald-950/20 border-emerald-900/40'
                             : 'text-red-400 bg-red-950/20 border-red-900/40'
                           }`}>
-                          {userObj.isActive ? <UserCheck className="w-3.5 h-3.5" /> : <UserX className="w-3.5 h-3.5" />}
-                          <span>{userObj.isActive ? 'Hoạt động' : 'Đã khóa'}</span>
+                          {userObj.isActive ? <UserCheck className="w-2.5 h-2.5 shrink-0" /> : <UserX className="w-2.5 h-2.5 shrink-0" />}
+                          <span>{userObj.isActive ? 'Mở' : 'Khóa'}</span>
                         </span>
                       </td>
 
                       {/* Action buttons */}
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-3 py-2.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             disabled={actionUserId === userObj._id}
                             onClick={() => handleChangeRole(userObj._id, userObj.role)}
-                            className="px-2.5 py-1.5 text-xs font-bold text-slate-300 hover:text-purple-450 hover:bg-purple-950/30 rounded-lg border border-slate-800 hover:border-purple-900 transition-all cursor-pointer bg-slate-900 flex items-center gap-1 hover:text-purple-400 disabled:opacity-50"
+                            className="px-2 py-0.5 text-[10px] font-bold text-slate-300 hover:text-purple-400 hover:bg-purple-950/30 rounded-lg border border-slate-800 hover:border-purple-900 transition-all cursor-pointer bg-slate-900 flex items-center gap-1 disabled:opacity-50"
                             title="Đổi vai trò"
                           >
-                            <Shield className="w-3.5 h-3.5" />
+                            <Shield className="w-3 h-3 text-purple-500 shrink-0" />
                             <span>Quyền</span>
                           </button>
                           <button
                             disabled={actionUserId === userObj._id}
                             onClick={() => handleToggleLock(userObj._id, userObj.isActive)}
-                            className={`px-2.5 py-1.5 text-xs font-bold rounded-lg border transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50 ${userObj.isActive
+                            className={`px-2 py-0.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50 ${userObj.isActive
                                 ? 'text-red-400 hover:text-red-300 hover:bg-red-950/25 border-slate-800 hover:border-red-900/40 bg-slate-900'
                                 : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/25 border-slate-800 hover:border-emerald-900/40 bg-slate-900'
                               }`}
                             title={userObj.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
                           >
-                            {userObj.isActive ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
+                            {userObj.isActive ? <UserX className="w-3 h-3 shrink-0" /> : <UserCheck className="w-3 h-3 shrink-0" />}
                             <span>{userObj.isActive ? 'Khóa' : 'Mở'}</span>
                           </button>
                         </div>

@@ -73,12 +73,12 @@ export default function Header() {
                   >
                     <div className="w-8 h-8 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-sm group-hover:bg-rose-100 transition-all duration-300 overflow-hidden">
                       {user.avatar ? (
-                        <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
+                        <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
                       ) : (
-                        user.fullName[0].toUpperCase()
+                        (user.fullName || 'User')[0].toUpperCase()
                       )}
                     </div>
-                    <span className="text-[10px] font-bold text-slate-500 mt-1 truncate max-w-[80px]">{user.fullName.split(' ').pop()}</span>
+                    <span className="text-[10px] font-bold text-slate-500 mt-1 truncate max-w-[80px]">{(user.fullName || 'User').split(' ').pop()}</span>
                   </button>
 
                   {isDropdownOpen && (
@@ -261,6 +261,103 @@ export default function Header() {
             <Link to="/category/pc-gaming" onClick={() => setIsMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg transition-colors">PC Gaming</Link>
             <Link to="/category/phu-kien" onClick={() => setIsMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg transition-colors">Phụ kiện</Link>
           </nav>
+
+          {/* User Account Section in Mobile Menu */}
+          <div className="border-t border-slate-100 pt-4 mt-4">
+            {user ? (
+              <div className="space-y-4">
+                {/* User Info */}
+                <div className="flex items-center gap-3 px-3 py-1">
+                  <div className="w-10 h-10 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-sm overflow-hidden shrink-0">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
+                    ) : (
+                      (user.fullName || 'User')[0].toUpperCase()
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-slate-800 text-sm truncate">{user.fullName || 'Khách hàng'}</div>
+                    <div className="text-xs text-slate-400 font-medium truncate">{user.email}</div>
+                  </div>
+                </div>
+
+                {/* Links */}
+                <div className="flex flex-col gap-1">
+                  <Link 
+                    to="/profile" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold rounded-xl"
+                  >
+                    <User className="w-4.5 h-4.5 text-slate-400" />
+                    <span>Hồ sơ của tôi</span>
+                  </Link>
+
+                  <Link 
+                    to="/orders" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold rounded-xl"
+                  >
+                    <Package className="w-4.5 h-4.5 text-slate-400" />
+                    <span>Đơn hàng của tôi</span>
+                  </Link>
+
+                  <Link 
+                    to="/addresses" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-colors font-semibold rounded-xl"
+                  >
+                    <MapPin className="w-4.5 h-4.5 text-slate-400" />
+                    <span>Địa chỉ của tôi</span>
+                  </Link>
+
+                  {user.role === 'admin' && (
+                    <Link 
+                      to="/admin" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-purple-600 hover:bg-purple-50/50 transition-colors font-bold rounded-xl"
+                    >
+                      <LayoutGrid className="w-4.5 h-4.5 text-purple-500" />
+                      <span>Trang quản trị</span>
+                    </Link>
+                  )}
+                </div>
+
+                <div className="border-t border-slate-100 pt-2"></div>
+
+                <button 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-650 hover:bg-red-50/50 transition-colors font-bold cursor-pointer text-left border-0 bg-transparent rounded-xl"
+                >
+                  <LogOut className="w-4.5 h-4.5 text-red-500" />
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3 px-3">
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-red-650 hover:bg-red-700 text-white font-extrabold rounded-xl text-sm transition-colors shadow-xs decoration-none bg-red-600"
+                >
+                  <LogIn className="w-4.5 h-4.5" />
+                  <span>Đăng nhập</span>
+                </Link>
+                <div className="text-center">
+                  <span className="text-xs text-slate-400 font-medium">Chưa có tài khoản? </span>
+                  <Link 
+                    to="/register" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-bold text-red-650 hover:text-red-700 transition-colors decoration-none"
+                  >
+                    Đăng ký ngay
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>

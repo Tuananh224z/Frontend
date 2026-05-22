@@ -557,9 +557,8 @@ export default function AdminProduct() {
                     value={price}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (val === '' || /^\d+$/.test(val)) {
-                        setPrice(val);
-                      }
+                      const cleaned = val.replace(/\D/g, '');
+                      setPrice(cleaned);
                     }}
                     placeholder="Nhập giá bán..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-855 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
@@ -572,9 +571,8 @@ export default function AdminProduct() {
                     value={discountPrice}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (val === '' || /^\d+$/.test(val)) {
-                        setDiscountPrice(val);
-                      }
+                      const cleaned = val.replace(/\D/g, '');
+                      setDiscountPrice(cleaned);
                     }}
                     placeholder="Nhập giá cũ..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
@@ -588,9 +586,8 @@ export default function AdminProduct() {
                     value={stock}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (val === '' || /^\d+$/.test(val)) {
-                        setStock(val);
-                      }
+                      const cleaned = val.replace(/\D/g, '');
+                      setStock(cleaned);
                     }}
                     placeholder="Nhập số lượng..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
@@ -618,9 +615,13 @@ export default function AdminProduct() {
                     value={sortOrder}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (val === '' || /^-?\d*$/.test(val)) {
-                        setSortOrder(val);
+                      let cleaned = val.replace(/[^\d-]/g, '');
+                      if (cleaned.startsWith('-')) {
+                        cleaned = '-' + cleaned.slice(1).replace(/-/g, '');
+                      } else {
+                        cleaned = cleaned.replace(/-/g, '');
                       }
+                      setSortOrder(cleaned);
                     }}
                     placeholder="Nhập thứ tự..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"

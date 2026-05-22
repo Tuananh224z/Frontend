@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { Link } from 'react-router-dom';
 import chatbotService from '../../services/chatbotService';
-import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SuggestedProduct {
@@ -49,7 +50,17 @@ export default function Chatbot() {
     return token;
   };
 
-  const sessionToken = getSessionToken();
+  const [sessionToken, setSessionToken] = useState(() => getSessionToken());
+
+  const handleResetChat = () => {
+    if (window.confirm("Bạn có chắc chắn muốn làm mới cuộc trò chuyện này không? Lịch sử chat cũ sẽ bị xóa.")) {
+      const newToken = `session-${Math.random().toString(36).substring(2, 15)}-${Date.now()}`;
+      localStorage.setItem('chatSessionToken', newToken);
+      setSessionToken(newToken);
+      setMessages([]);
+      setFeedback(null);
+    }
+  };
 
   // Khởi tạo Socket.io & Tải lịch sử tin nhắn
   useEffect(() => {
@@ -162,6 +173,64 @@ export default function Chatbot() {
     return `${BACKEND_URL}${cleanPath}`;
   };
 
+  // Helper to parse simple markdown links [text](url) and style them
+  const formatMessageText = (text: string) => {
+    if (!text) return '';
+    
+    // Regular expression to match markdown link format: [text](url)
+    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      const matchIndex = match.index;
+      
+      // Append text before the match
+      if (matchIndex > lastIndex) {
+        parts.push(text.substring(lastIndex, matchIndex));
+      }
+      
+      const linkText = match[1];
+      const linkUrl = match[2];
+      
+      // Check if it's an internal link
+      const isInternal = linkUrl.startsWith('/');
+      
+      if (isInternal) {
+        parts.push(
+          <Link
+            key={`link-${matchIndex}`}
+            to={linkUrl}
+            className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
+          >
+            {linkText}
+          </Link>
+        );
+      } else {
+        parts.push(
+          <a
+            key={`link-${matchIndex}`}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
+          >
+            {linkText}
+          </a>
+        );
+      }
+      
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
+
   return (
     <>
       {/* Floating Buttons Stack */}
@@ -240,12 +309,21 @@ export default function Chatbot() {
                 </span>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleResetChat}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                title="Làm mới cuộc trò chuyện"
+              >
+                <RotateCcw className="w-4.5 h-4.5 text-indigo-200 hover:text-white" />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Messages Body */}
@@ -276,56 +354,10 @@ export default function Chatbot() {
                       : 'bg-slate-800/80 text-slate-100 rounded-bl-none border border-slate-700/30'
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{msg.text}</p>
+                  <p className="whitespace-pre-wrap">{formatMessageText(msg.text)}</p>
                 </div>
 
-                {/* Suggested Products (Only from Bot and if exists) */}
-                {msg.sender === 'bot' && msg.suggestedProducts && msg.suggestedProducts.length > 0 && (
-                  <div className="w-full mt-2 pl-2 border-l-2 border-indigo-500 space-y-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1">
-                      <Laptop className="w-3 h-3" /> Laptop đề xuất tương ứng:
-                    </span>
-                    
-                    {/* Horizontal scroll of products */}
-                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none custom-scrollbar">
-                      {msg.suggestedProducts.map((prod) => (
-                        <div
-                          key={prod._id}
-                          className="flex-none w-56 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-indigo-500/50 transition-colors duration-200"
-                        >
-                          <img
-                            src={getImageUrl(prod.images && prod.images[0])}
-                            alt={prod.name}
-                            className="w-full h-24 object-cover"
-                          />
-                          <div className="p-2.5 space-y-1">
-                            <h5 className="font-bold text-xs text-slate-100 line-clamp-1 hover:text-indigo-400 cursor-pointer">
-                              {prod.name}
-                            </h5>
-                            {prod.specs && (
-                              <p className="text-[10px] text-slate-500 line-clamp-1">
-                                {prod.specs.cpu} | {prod.specs.ram}
-                              </p>
-                            )}
-                            <div className="flex items-center gap-1.5 pt-1">
-                              <span className="font-bold text-xs text-rose-400">
-                                {formatPrice(prod.price)}
-                              </span>
-                              {prod.discountPrice && prod.discountPrice > prod.price && (
-                                <span className="text-[10px] text-slate-500 line-through">
-                                  {formatPrice(prod.discountPrice)}
-                                </span>
-                              )}
-                            </div>
-                            <button className="w-full mt-2 py-1 text-[10px] font-semibold text-center text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500 hover:text-white rounded-lg transition-all cursor-pointer">
-                              Xem chi tiết
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Suggested Products (Only from Bot and if exists) - Hidden as requested */}
 
                 {/* Feedback buttons for bot answers (Only for the latest bot message) */}
                 {msg.sender === 'bot' && index === messages.length - 1 && (

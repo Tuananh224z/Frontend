@@ -52,25 +52,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfile = async () => {
     try {
       let userData: any = null;
-      try {
-        // Try active backend's endpoint /auth/me first
-        const response = await authService.getMe();
-        if (response.data && (response.data.id || response.data._id || response.data.email)) {
-          userData = normalizeUser(response.data);
-
-        }
-      } catch (err: any) {
-        // If /auth/me fails, try /auth/profile
-        if (err.response?.status === 404 || !err.response) {
-          const response = await authService.getProfile();
-          if (response.data?.status === 'success') {
-            userData = normalizeUser(response.data.data);
-          } else if (response.data && (response.data.id || response.data._id || response.data.email)) {
-            userData = normalizeUser(response.data);
-          }
-        } else {
-          throw err;
-        }
+      const response = await authService.getProfile();
+      if (response.data?.status === 'success') {
+        userData = normalizeUser(response.data.data);
+      } else if (response.data && (response.data.id || response.data._id || response.data.email)) {
+        userData = normalizeUser(response.data);
       }
 
       if (userData) {

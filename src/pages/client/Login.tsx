@@ -19,7 +19,12 @@ export default function Login() {
   React.useEffect(() => {
     // If user is already logged in, redirect them
     if (user) {
-      navigate(from, { replace: true });
+      if (user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        const targetPath = from.startsWith('/admin') ? '/' : from;
+        navigate(targetPath, { replace: true });
+      }
     }
   }, [user, navigate, from]);
 
