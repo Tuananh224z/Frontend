@@ -17,6 +17,7 @@ export default function AdminChatbot() {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   // Chatbot configuration states
+  const [model, setModel] = useState('llama-3.1-8b-instant');
   const [systemPrompt, setSystemPrompt] = useState('');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(500);
@@ -40,6 +41,7 @@ export default function AdminChatbot() {
       }
       if (settingsRes.data?.status === 'success') {
         const config = settingsRes.data.data?.chatbotConfig || {};
+        setModel(config.model || 'llama-3.1-8b-instant');
         setSystemPrompt(config.systemPrompt || '');
         setTemperature(config.temperature ?? 0.7);
         setMaxTokens(config.maxTokens ?? 500);
@@ -83,6 +85,7 @@ export default function AdminChatbot() {
 
       const response = await chatbotService.updateSystemSettings({
         chatbotConfig: {
+          model,
           systemPrompt,
           temperature: parseFloat(temperature.toString()),
           maxTokens: parseInt(maxTokens.toString(), 10),
@@ -93,6 +96,7 @@ export default function AdminChatbot() {
         setSuccess('Cập nhật cấu hình Chatbot AI thành công!');
         // Refresh values
         const config = response.data.data?.chatbotConfig || {};
+        setModel(config.model || 'llama-3.1-8b-instant');
         setSystemPrompt(config.systemPrompt || '');
         setTemperature(config.temperature ?? 0.7);
         setMaxTokens(config.maxTokens ?? 500);
@@ -372,6 +376,39 @@ export default function AdminChatbot() {
               </div>
 
               <form onSubmit={handleSaveConfig} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                      Chọn Model AI <span className="text-purple-400">*</span>
+                    </label>
+                    <select
+                      value={['llama-3.1-8b-instant', 'llama-3.3-70b-versatile'].includes(model) ? model : 'custom'}
+                      onChange={(e) => {
+                        if (e.target.value !== 'custom') {
+                          setModel(e.target.value);
+                        }
+                      }}
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-200"
+                    >
+                      <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Mặc định - Phản hồi nhanh)</option>
+                      <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Mạnh mẽ - Phản hồi tốt hơn)</option>
+                      <option value="custom">Tùy chọn khác (Nhập thủ công bên cạnh)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                      Nhập Model tùy chỉnh
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ví dụ: llama-3.1-8b-instant"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-200"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                     System Instruction / Prompt (Chỉ dẫn hệ thống) <span className="text-purple-400">*</span>
