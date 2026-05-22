@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth, UserAddress } from '../../contexts/AuthContext';
+import { useAuth, type UserAddress } from '../../contexts/AuthContext';
 import { MapPin, CheckCircle, ShieldAlert, Loader2, Pencil, Plus, X, Trash2 } from 'lucide-react';
 
 interface Province {
@@ -89,7 +89,7 @@ export default function Addresses() {
     fetchProvinces();
   }, []);
 
-  const fetchDistricts = async (pCode: number) => {
+  const fetchDistricts = async (pCode: number): Promise<District[]> => {
     try {
       const response = await fetch(`https://provinces.open-api.vn/api/p/${pCode}?depth=2`);
       if (!response.ok) throw new Error('Failed to fetch districts');
@@ -102,7 +102,7 @@ export default function Addresses() {
     }
   };
 
-  const fetchWards = async (dCode: number) => {
+  const fetchWards = async (dCode: number): Promise<Ward[]> => {
     try {
       const response = await fetch(`https://provinces.open-api.vn/api/d/${dCode}?depth=2`);
       if (!response.ok) throw new Error('Failed to fetch wards');
@@ -146,14 +146,14 @@ export default function Addresses() {
               const currentDistricts = await fetchDistricts(foundProvince.code);
 
               const foundDistrict = currentDistricts.find(
-                (d) => d.name.toLowerCase() === editingAddress.district.toLowerCase()
+                (d: District) => d.name.toLowerCase() === editingAddress.district.toLowerCase()
               );
               if (foundDistrict) {
                 setSelectedDistrictCode(foundDistrict.code);
                 const currentWards = await fetchWards(foundDistrict.code);
 
                 const foundWard = currentWards.find(
-                  (w) => w.name.toLowerCase() === editingAddress.ward.toLowerCase()
+                  (w: Ward) => w.name.toLowerCase() === editingAddress.ward.toLowerCase()
                 );
                 if (foundWard) {
                   setSelectedWardCode(foundWard.code);

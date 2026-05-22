@@ -154,19 +154,6 @@ export default function Chatbot() {
     }
   };
 
-  // Format hiển thị tiền tệ VND
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
-
-  // Helper lấy URL ảnh hoàn chỉnh
-  const getImageUrl = (imagePath: string) => {
-    if (!imagePath) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
-    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `${BACKEND_URL}${cleanPath}`;
-  };
-
   // Helper to parse simple markdown links [text](url) and style them
   const formatMessageText = (text: string) => {
     if (!text) return '';

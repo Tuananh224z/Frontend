@@ -88,8 +88,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (token) {
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
+      if (savedUser && savedUser !== 'undefined') {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (e) {
+          console.error('Failed to parse saved user:', e);
+          setUser(null);
+          localStorage.removeItem('user');
+        }
         setLoading(false);
         // Refresh profile in background
         fetchProfile();
