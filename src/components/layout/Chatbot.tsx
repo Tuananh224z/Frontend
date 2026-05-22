@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import chatbotService from '../../services/chatbotService';
 import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SuggestedProduct {
   _id: string;
@@ -28,6 +29,7 @@ interface Message {
 const BACKEND_URL = 'http://localhost:5000';
 
 export default function Chatbot() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -132,7 +134,7 @@ export default function Chatbot() {
       socketRef.current.emit('sendMessage', {
         sessionToken,
         messageText: userMessageText,
-        userId: null // Gửi kèm userId nếu người dùng đã đăng nhập
+        userId: user?._id || null // Gửi kèm userId nếu người dùng đã đăng nhập
       });
     }
   };
@@ -156,7 +158,8 @@ export default function Chatbot() {
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
-    return `${BACKEND_URL}/${imagePath}`;
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${BACKEND_URL}${cleanPath}`;
   };
 
   return (
@@ -306,11 +309,11 @@ export default function Chatbot() {
                             )}
                             <div className="flex items-center gap-1.5 pt-1">
                               <span className="font-bold text-xs text-rose-400">
-                                {formatPrice(prod.discountPrice && prod.discountPrice > 0 ? prod.discountPrice : prod.price)}
+                                {formatPrice(prod.price)}
                               </span>
-                              {prod.discountPrice && prod.discountPrice > 0 && (
+                              {prod.discountPrice && prod.discountPrice > prod.price && (
                                 <span className="text-[10px] text-slate-500 line-through">
-                                  {formatPrice(prod.price)}
+                                  {formatPrice(prod.discountPrice)}
                                 </span>
                               )}
                             </div>

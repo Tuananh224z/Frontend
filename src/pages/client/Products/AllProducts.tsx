@@ -181,7 +181,8 @@ export default function AllProducts() {
   };
 
   const getDiscountPercent = (price: number, discountPrice: number) => {
-    return Math.round(((price - discountPrice) / price) * 100);
+    if (discountPrice <= price) return 0;
+    return Math.round(((discountPrice - price) / discountPrice) * 100);
   };
 
   const getProductImage = (images: string[]) => {
@@ -475,8 +476,7 @@ export default function AllProducts() {
               // GRID VIEW
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((prod) => {
-                  const hasDiscount = prod.discountPrice && prod.discountPrice > 0;
-                  const currentPrice = hasDiscount ? prod.discountPrice! : prod.price;
+                  const hasDiscount = prod.discountPrice ? prod.discountPrice > prod.price : false;
                   const isOutOfStock = prod.stock === 0;
 
                   return (
@@ -557,11 +557,11 @@ export default function AllProducts() {
                         <div className="flex items-end justify-between pt-1 relative pr-12">
                           <div className="flex flex-col text-left">
                             <span className="font-extrabold text-base text-red-600">
-                              {formatPrice(currentPrice)}
+                              {formatPrice(prod.price)}
                             </span>
                             {hasDiscount && (
                               <span className="text-xs text-slate-400 line-through">
-                                {formatPrice(prod.price)}
+                                {formatPrice(prod.discountPrice!)}
                               </span>
                             )}
                           </div>
@@ -588,8 +588,7 @@ export default function AllProducts() {
               // LIST VIEW
               <div className="flex flex-col gap-4">
                 {products.map((prod) => {
-                  const hasDiscount = prod.discountPrice && prod.discountPrice > 0;
-                  const currentPrice = hasDiscount ? prod.discountPrice! : prod.price;
+                  const hasDiscount = prod.discountPrice ? prod.discountPrice > prod.price : false;
                   const isOutOfStock = prod.stock === 0;
 
                   return (
@@ -669,11 +668,11 @@ export default function AllProducts() {
                         
                         <div className="flex flex-col text-left md:text-right">
                           <span className="font-extrabold text-lg text-red-600">
-                            {formatPrice(currentPrice)}
+                            {formatPrice(prod.price)}
                           </span>
                           {hasDiscount && (
                             <span className="text-xs text-slate-400 line-through">
-                              {formatPrice(prod.price)}
+                              {formatPrice(prod.discountPrice!)}
                             </span>
                           )}
                         </div>

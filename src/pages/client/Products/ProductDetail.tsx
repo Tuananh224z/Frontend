@@ -35,8 +35,8 @@ interface ProductType {
 const MOCK_ZEPHYRUS: ProductType = {
   _id: 'zephyrus-g14-mock',
   name: 'Laptop ASUS ROG Zephyrus G14 2024 GA403',
-  price: 4000,
-  discountPrice: 2000,
+  price: 2000,
+  discountPrice: 4000,
   slug: 'asus-rog-zephyrus-g14-2024-ga403',
   images: [
     'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800',
@@ -145,7 +145,7 @@ export default function ProductDetail() {
       _id: selectedVersion === 'upgrade' ? `${product._id}_upgrade` : product._id,
       name: selectedVersion === 'upgrade' ? `${product.name} (${upgradeName})` : product.name,
       price: selectedVersion === 'upgrade' ? product.price + versionPriceDifference : product.price,
-      discountPrice: product.discountPrice !== undefined && product.discountPrice > 0
+      discountPrice: product.discountPrice !== undefined && product.discountPrice > product.price
         ? product.discountPrice + (selectedVersion === 'upgrade' ? versionPriceDifference : 0)
         : undefined,
       images: product.images,

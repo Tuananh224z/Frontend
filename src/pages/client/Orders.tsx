@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import orderService from '../../services/orderService';
 import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, Loader2 } from 'lucide-react';
+import QRPaymentModal from '../../components/common/QRPaymentModal';
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [activeOrderIdForQR, setActiveOrderIdForQR] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     try {
@@ -134,9 +136,9 @@ export default function Orders() {
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wide">
                     <span>Mã đơn:</span>
-                    <span className="text-slate-700">#{order._id.substring(order._id.length - 8)}</span>
+                    <span className="text-slate-700">#{order.orderCode || order._id.substring(order._id.length - 8)}</span>
                   </div>
-                  <div>{getStatusBadge(order.status)}</div>
+                  <div>{getStatusBadge(order.orderStatus || order.status)}</div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500 font-medium mb-4">
@@ -146,7 +148,7 @@ export default function Orders() {
                   </div>
                   <div className="flex items-center gap-1">
                     <DollarSign className="w-4 h-4 text-slate-450" />
-                    <span>Tổng tiền: <strong className="text-slate-800">{formatPrice(order.totalPrice)}</strong></span>
+                    <span>Tổng tiền: <strong className="text-slate-800">{formatPrice(order.totalAmount || order.totalPrice)}</strong></span>
                   </div>
                 </div>
 
@@ -206,7 +208,7 @@ export default function Orders() {
                 <div className="space-y-2 border-t border-slate-50 pt-4 text-sm font-medium">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Tạm tính:</span>
-                    <span className="text-slate-800 font-semibold">{formatPrice(selectedOrder.totalPrice)}</span>
+                    <span className="text-slate-800 font-semibold">{formatPrice(selectedOrder.totalAmount || selectedOrder.totalPrice)}</span>
                   </div>
                   {selectedOrder.discountAmount > 0 && (
                     <div className="flex justify-between text-red-600 font-bold">
@@ -216,24 +218,46 @@ export default function Orders() {
                   )}
                   <div className="flex justify-between border-t border-slate-50 pt-2 text-base font-extrabold">
                     <span className="text-slate-800">Tổng thanh toán:</span>
-                    <span className="text-red-650 text-red-600">{formatPrice(selectedOrder.totalPrice)}</span>
+                    <span className="text-red-650 text-red-600">{formatPrice(selectedOrder.totalAmount || selectedOrder.totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-xs pt-1">
                     <span className="text-slate-400">Phương thức:</span>
-                    <span className="text-slate-650 font-bold uppercase">{selectedOrder.paymentMethod === 'cod' ? 'Thanh toán COD' : 'Thanh toán trực tuyến'}</span>
+                    <span className="text-slate-650 font-bold uppercase">
+                      {selectedOrder.paymentMethod?.toUpperCase() === 'COD' ? 'Thanh toán COD' : 'Thanh toán trực tuyến'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs pt-1">
+                    <span className="text-slate-400">Thanh toán:</span>
+                    <span className={`font-bold ${selectedOrder.paymentStatus === 'Paid' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                      {selectedOrder.paymentStatus === 'Paid' ? 'Đã thanh toán' : 'Chờ thanh toán'}
+                    </span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                {selectedOrder.status === 'Pending' && (
-                  <button
-                    onClick={() => handleCancelOrder(selectedOrder._id)}
-                    disabled={isCancelling}
-                    className="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold rounded-2xl text-sm transition-colors border-0 cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    {isCancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Hủy đơn hàng'}
-                  </button>
-                )}
+                <div className="space-y-2">
+                  {/* Nút thanh toán QR cho các đơn hàng Online và chưa thanh toán */}
+                  {selectedOrder.paymentMethod?.toUpperCase() === 'ONLINE' && 
+                   selectedOrder.paymentStatus !== 'Paid' && 
+                   selectedOrder.orderStatus !== 'Cancelled' && (
+                    <button
+                      onClick={() => setActiveOrderIdForQR(selectedOrder._id)}
+                      className="w-full py-3 bg-red-600 hover:bg-red-750 text-white font-extrabold rounded-2xl text-sm transition-colors border-0 cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-red-200/50"
+                    >
+                      Thanh toán qua QR Code
+                    </button>
+                  )}
+                  
+                  {(selectedOrder.orderStatus === 'Pending' || selectedOrder.status === 'Pending') && (
+                    <button
+                      onClick={() => handleCancelOrder(selectedOrder._id)}
+                      disabled={isCancelling}
+                      className="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold rounded-2xl text-sm transition-colors border-0 cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      {isCancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Hủy đơn hàng'}
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="bg-slate-50/50 p-6 rounded-3xl border border-dashed border-slate-200 text-center py-12 text-slate-400 font-semibold text-sm">
@@ -242,6 +266,27 @@ export default function Orders() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Modal quét QR thanh toán */}
+      {activeOrderIdForQR && (
+        <QRPaymentModal
+          orderId={activeOrderIdForQR}
+          onClose={() => setActiveOrderIdForQR(null)}
+          onPaymentSuccess={() => {
+            setActiveOrderIdForQR(null);
+            // Reload đơn hàng sau khi thanh toán thành công
+            fetchOrders();
+            // Nếu đơn hàng đang chọn là đơn hàng vừa được thanh toán, update thông tin hiển thị
+            if (selectedOrder && selectedOrder._id === activeOrderIdForQR) {
+              orderService.getOrderDetails(activeOrderIdForQR).then((res) => {
+                if (res.data?.status === 'success') {
+                  setSelectedOrder(res.data.data);
+                }
+              });
+            }
+          }}
+        />
       )}
     </div>
   );

@@ -15,7 +15,8 @@ export default function ProductGallery({ images, productName, discountPrice, pri
   const getProductImage = (img: string) => {
     if (!img) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
     if (img.startsWith('http://') || img.startsWith('https://')) return img;
-    return `${BACKEND_URL}/${img}`;
+    const cleanPath = img.startsWith('/') ? img : `/${img}`;
+    return `${BACKEND_URL}${cleanPath}`;
   };
 
   useEffect(() => {
@@ -27,8 +28,8 @@ export default function ProductGallery({ images, productName, discountPrice, pri
   }, [images]);
 
   // Calculate discount percentage
-  const hasDiscount = discountPrice !== undefined && discountPrice > 0;
-  const discountPercent = hasDiscount ? Math.round(((price - discountPrice!) / price) * 100) : 0;
+  const hasDiscount = discountPrice !== undefined && discountPrice > price;
+  const discountPercent = hasDiscount ? Math.round(((discountPrice! - price) / discountPrice!) * 100) : 0;
 
   const resolvedImages = images && images.length > 0 
     ? images 

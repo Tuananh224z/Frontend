@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, ArrowLeft, Trash2, ShieldCheck } from 'lucide-react';
 import { useCart, type Product } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = 'http://localhost:5000';
 
@@ -21,7 +22,8 @@ export default function Cart() {
     if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) {
       return firstImg;
     }
-    return `${BACKEND_URL}/${firstImg}`;
+    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+    return `${BACKEND_URL}${cleanPath}`;
   };
 
   // Định dạng thông số kĩ thuật (specs)
@@ -39,9 +41,16 @@ export default function Cart() {
 
   const savingsTotal = originalTotal - totalAmount;
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   // Xử lý khi nhấn nút Đặt Hàng
   const handleCheckout = () => {
-    alert('Cảm ơn bạn đã đặt hàng! Tính năng thanh toán đang được xử lý.');
+    if (!user) {
+      navigate('/login', { state: { from: { pathname: '/checkout' } } });
+    } else {
+      navigate('/checkout');
+    }
   };
 
   // 1. TRẠNG THÁI TRỐNG (EMPTY STATE)
@@ -66,8 +75,8 @@ export default function Cart() {
 
   // 2. TRẠNG THÁI CÓ SẢN PHẨM (POPULATED STATE)
   return (
-    <div className="min-h-screen bg-slate-50/50 py-10 flex justify-center w-full">
-      <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/50 py-10 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumb */}
         <div className="text-xs text-slate-500 mb-6 flex items-center gap-1.5">
@@ -96,8 +105,8 @@ export default function Cart() {
             <div className="space-y-4">
               {cartItems.map((item) => {
                 const product = item.product;
-                const hasDiscount = product.discountPrice && product.discountPrice > 0;
-                const unitPrice = hasDiscount ? product.discountPrice! : product.price;
+                const hasDiscount = product.discountPrice ? product.discountPrice > product.price : false;
+                const unitPrice = product.price;
                 const itemTotalPrice = unitPrice * item.quantity;
 
                 return (
@@ -147,11 +156,11 @@ export default function Cart() {
                     {/* Phần Đơn giá (lg: col-span-2) */}
                     <div className="hidden lg:flex lg:col-span-2 flex-col items-center justify-center text-center">
                       <span className="font-bold text-sm sm:text-base text-slate-800">
-                        {formatPrice(unitPrice)}
+                        {formatPrice(product.price)}
                       </span>
                       {hasDiscount && (
                         <span className="text-[11px] text-slate-400 line-through mt-0.5">
-                          {formatPrice(product.price)}
+                          {formatPrice(product.discountPrice!)}
                         </span>
                       )}
                     </div>
@@ -190,11 +199,11 @@ export default function Cart() {
                       <div className="flex flex-col items-start">
                         <span className="text-xs text-slate-400 font-medium mb-1">Đơn giá</span>
                         <span className="font-bold text-sm text-slate-800">
-                          {formatPrice(unitPrice)}
+                          {formatPrice(product.price)}
                         </span>
                         {hasDiscount && (
                           <span className="text-[10px] text-slate-400 line-through">
-                            {formatPrice(product.price)}
+                            {formatPrice(product.discountPrice!)}
                           </span>
                         )}
                       </div>

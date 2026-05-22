@@ -28,11 +28,16 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Unauthenticated, clear credentials and refresh page or redirect
+      // Unauthenticated, clear credentials
       localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
-      // Only redirect if not already on login/register pages
-      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+      
+      // Only redirect to login if currently accessing a protected path
+      const protectedPaths = ['/profile', '/orders', '/addresses', '/admin'];
+      const isProtectedPath = protectedPaths.some(path => window.location.pathname.startsWith(path));
+      
+      if (isProtectedPath && !window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
         window.location.href = '/login';
       }
     }

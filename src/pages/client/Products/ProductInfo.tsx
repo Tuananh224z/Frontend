@@ -51,11 +51,11 @@ export default function ProductInfo({
   const brandName = typeof product.brand === 'object' ? product.brand.name : (product.brand || 'Laptop');
 
   // Pricing calculations
-  const hasDiscount = product.discountPrice !== undefined && product.discountPrice > 0;
+  const hasDiscount = product.discountPrice !== undefined && product.discountPrice > product.price;
   
   // Base prices
-  const basePrice = hasDiscount ? product.discountPrice! : product.price;
-  const baseOriginalPrice = product.price;
+  const basePrice = product.price;
+  const baseOriginalPrice = hasDiscount ? product.discountPrice! : product.price;
 
   // Actual display prices with version price difference added
   const displayPrice = basePrice + (selectedVersion === 'upgrade' ? versionPriceDifference : 0);

@@ -262,7 +262,7 @@ export default function AdminCategories() {
                     <td className="px-6 py-4">
                       <div className="w-10 h-10 rounded-xl bg-slate-950 p-1 border border-slate-800 flex items-center justify-center">
                         {cat.image ? (
-                          <img src={cat.image} alt={cat.name} className="w-full h-full object-contain" />
+                          <img src={cat.image.startsWith('http') ? cat.image : `http://localhost:5000${cat.image}`} alt={cat.name} className="w-full h-full object-contain" />
                         ) : (
                           <Tags className="w-5 h-5 text-slate-650" />
                         )}

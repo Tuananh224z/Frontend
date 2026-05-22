@@ -26,6 +26,7 @@ interface Product {
 interface Brand {
   _id: string;
   name: string;
+  logo?: string;
   logoUrl?: string;
   description?: string;
 }
@@ -41,10 +42,10 @@ export default function Home() {
   // Dữ liệu mẫu (fallback) để đảm bảo giao diện luôn hiển thị tuyệt đẹp
   const mockProducts: Product[] = [
     {
-      _id: '1',
+      _id: '6a0f2810d604d6c5e101ce5d',
       name: 'ASUS ROG Strix G16 (2024)',
-      price: 36990000,
-      discountPrice: 32990000,
+      price: 32990000,
+      discountPrice: 36990000,
       images: ['https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500'],
       slug: 'asus-rog-strix-g16-2024',
       specs: {
@@ -56,10 +57,10 @@ export default function Home() {
       brand: { name: 'ASUS' }
     },
     {
-      _id: '2',
+      _id: '6a0f2810d604d6c5e101ce61',
       name: 'MacBook Air M3 13 inch (2024)',
-      price: 32990000,
-      discountPrice: 28990000,
+      price: 28990000,
+      discountPrice: 32990000,
       images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500'],
       slug: 'macbook-air-m3-13-inch',
       specs: {
@@ -71,7 +72,7 @@ export default function Home() {
       brand: { name: 'Apple' }
     },
     {
-      _id: '3',
+      _id: '6a0f2810d604d6c5e101ce5f',
       name: 'Dell XPS 15 9530',
       price: 48990000,
       images: ['https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500'],
@@ -85,10 +86,10 @@ export default function Home() {
       brand: { name: 'Dell' }
     },
     {
-      _id: '4',
+      _id: '6a0f2810d604d6c5e101ce60',
       name: 'Lenovo Legion 5 Pro 16IRX8',
-      price: 38990000,
-      discountPrice: 34990000,
+      price: 34990000,
+      discountPrice: 38990000,
       images: ['https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500'],
       slug: 'lenovo-legion-5-pro-16irx8',
       specs: {
@@ -100,10 +101,10 @@ export default function Home() {
       brand: { name: 'Lenovo' }
     },
     {
-      _id: '5',
+      _id: '6a0f2810d604d6c5e101ce5e',
       name: 'MSI Prestige 14 Evo',
-      price: 24990000,
-      discountPrice: 21990000,
+      price: 21990000,
+      discountPrice: 24990000,
       images: ['https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500'],
       slug: 'msi-prestige-14-evo',
       specs: {
@@ -159,9 +160,10 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // Tính phần trăm giảm giá
+  // Tính phần trăm giảm giá (discountPrice là giá cũ, price là giá mới)
   const getDiscountPercent = (price: number, discountPrice: number) => {
-    return Math.round(((price - discountPrice) / price) * 100);
+    if (discountPrice <= price) return 0;
+    return Math.round(((discountPrice - price) / discountPrice) * 100);
   };
 
   // Định dạng tiền tệ
@@ -174,7 +176,8 @@ export default function Home() {
     if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
     const firstImg = images[0];
     if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
-    return `${BACKEND_URL}/${firstImg}`;
+    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+    return `${BACKEND_URL}${cleanPath}`;
   };
 
   return (
@@ -301,8 +304,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {products.map((prod) => {
-              const hasDiscount = prod.discountPrice && prod.discountPrice > 0;
-              const currentPrice = hasDiscount ? prod.discountPrice! : prod.price;
+              const hasDiscount = prod.discountPrice ? prod.discountPrice > prod.price : false;
 
               return (
                 <div
@@ -356,11 +358,11 @@ export default function Home() {
                     {/* Pricing */}
                     <div className="flex items-baseline flex-wrap gap-1.5 pt-1">
                       <span className="font-extrabold text-sm text-rose-500">
-                        {formatPrice(currentPrice)}
+                        {formatPrice(prod.price)}
                       </span>
                       {hasDiscount && (
                         <span className="text-[11px] text-slate-400 line-through">
-                          {formatPrice(prod.price)}
+                          {formatPrice(prod.discountPrice!)}
                         </span>
                       )}
                     </div>
@@ -388,15 +390,25 @@ export default function Home() {
           <p className="text-sm text-slate-500 mt-1">Các hãng laptop uy tín thế giới được phân phối chính hãng</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-          {brands.map((brand) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+          {brands.slice(0, 5).map((brand) => (
             <div
               key={brand._id}
               className="flex flex-col items-center justify-center p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-indigo-500/50 hover:shadow-lg transition-all duration-300 group cursor-pointer"
             >
-              {/* Brand icon placeholder styled beautifully */}
-              <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-3 group-hover:bg-indigo-50 transition-colors duration-300 text-slate-600 group-hover:text-indigo-600">
-                <Smartphone className="w-6 h-6" />
+              {/* Brand Logo */}
+              <div className="w-16 h-16 rounded-full overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center mb-3 group-hover:border-indigo-500/30 transition-all duration-300">
+                {brand.logo ? (
+                  <img
+                    src={brand.logo.startsWith('http') ? brand.logo : `${BACKEND_URL}${brand.logo}`}
+                    alt={brand.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-slate-600 group-hover:text-indigo-600">
+                    <Smartphone className="w-6 h-6" />
+                  </div>
+                )}
               </div>
               <h4 className="font-extrabold text-sm text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">
                 {brand.name}

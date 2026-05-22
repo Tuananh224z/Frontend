@@ -68,15 +68,15 @@ export default function AdminProduct() {
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
   const [slug, setSlug] = useState('');
-  const [price, setPrice] = useState(0);
-  const [discountPrice, setDiscountPrice] = useState(0);
-  const [stock, setStock] = useState(0);
+  const [price, setPrice] = useState<string | number>('');
+  const [discountPrice, setDiscountPrice] = useState<string | number>('');
+  const [stock, setStock] = useState<string | number>('');
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [shortDesc, setShortDesc] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState(0);
+  const [sortOrder, setSortOrder] = useState<string | number>('');
   const [summary, setSummary] = useState('');
   const [tagsString, setTagsString] = useState('');
 
@@ -124,8 +124,9 @@ export default function AdminProduct() {
 
       const response = await productService.getProducts(params);
       if (response.data?.status === 'success') {
-        const { products: pList, pages, total } = response.data.data;
-        setProducts(pList);
+        const targetData = response.data.data || response.data;
+        const { products: pList, pages, total } = targetData;
+        setProducts(pList || []);
         setTotalPages(pages || 1);
         setTotalProducts(total || 0);
       }
@@ -155,15 +156,15 @@ export default function AdminProduct() {
     setName('');
     setSku('');
     setSlug('');
-    setPrice(0);
-    setDiscountPrice(0);
-    setStock(0);
+    setPrice('');
+    setDiscountPrice('');
+    setStock('');
     setCategory(categories[0]?._id || '');
     setBrand(brands[0]?._id || '');
     setShortDesc('');
     setDescription('');
     setImages([]);
-    setSortOrder(0);
+    setSortOrder('');
     setSummary('');
     setTagsString('');
     setIsBestSeller(false);
@@ -197,15 +198,15 @@ export default function AdminProduct() {
     setName(product.name);
     setSku(product.sku || '');
     setSlug(product.slug);
-    setPrice(product.price);
-    setDiscountPrice(product.discountPrice || 0);
-    setStock(product.stock);
+    setPrice(product.price !== undefined ? product.price : '');
+    setDiscountPrice(product.discountPrice || '');
+    setStock(product.stock !== undefined ? product.stock : '');
     setCategory(product.category?._id || product.category || '');
     setBrand(product.brand?._id || product.brand || '');
     setShortDesc(product.shortDesc || '');
     setDescription(product.description || '');
     setImages(product.images || []);
-    setSortOrder(product.sortOrder || 0);
+    setSortOrder(product.sortOrder !== undefined ? product.sortOrder : '');
     setSummary(product.summary || '');
     setTagsString(product.tags ? product.tags.join(', ') : '');
     setIsBestSeller(product.isBestSeller || false);
@@ -371,15 +372,15 @@ export default function AdminProduct() {
         name,
         sku,
         slug: slug || undefined,
-        price,
-        discountPrice,
-        stock,
+        price: price === '' ? 0 : Number(price),
+        discountPrice: discountPrice === '' ? 0 : Number(discountPrice),
+        stock: stock === '' ? 0 : Number(stock),
         category,
         brand,
         shortDesc,
         description,
         images,
-        sortOrder,
+        sortOrder: sortOrder === '' ? 0 : Number(sortOrder),
         summary,
         isFeatured,
         isBestSeller,
@@ -549,31 +550,49 @@ export default function AdminProduct() {
               {/* Price, DiscountPrice, Stock */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá bán lẻ (VNĐ) *</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá mới / Giá bán (VNĐ) *</label>
                   <input
-                    type="number"
+                    type="text"
                     required
                     value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d+$/.test(val)) {
+                        setPrice(val);
+                      }
+                    }}
+                    placeholder="Nhập giá bán..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-855 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá khuyến mãi (VNĐ)</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá cũ (VNĐ)</label>
                   <input
-                    type="number"
+                    type="text"
                     value={discountPrice}
-                    onChange={(e) => setDiscountPrice(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d+$/.test(val)) {
+                        setDiscountPrice(val);
+                      }
+                    }}
+                    placeholder="Nhập giá cũ..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Số lượng kho *</label>
                   <input
-                    type="number"
+                    type="text"
                     required
                     value={stock}
-                    onChange={(e) => setStock(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d+$/.test(val)) {
+                        setStock(val);
+                      }
+                    }}
+                    placeholder="Nhập số lượng..."
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
                   />
                 </div>
@@ -595,10 +614,16 @@ export default function AdminProduct() {
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Thứ tự</label>
                   <input
-                    type="number"
+                    type="text"
                     value={sortOrder}
-                    onChange={(e) => setSortOrder(Number(e.target.value))}
-                    className="w-full px-4 py-2.5 bg-slate-955 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^-?\d*$/.test(val)) {
+                        setSortOrder(val);
+                      }
+                    }}
+                    placeholder="Nhập thứ tự..."
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
                   />
                 </div>
               </div>
@@ -1025,7 +1050,7 @@ export default function AdminProduct() {
                 </thead>
                 <tbody className="divide-y divide-slate-850">
                   {products.map((product) => {
-                    const hasPromo = product.discountPrice > 0;
+                    const hasPromo = product.discountPrice > product.price;
                     return (
                       <tr key={product._id} className="hover:bg-slate-850/40 transition-colors text-sm">
                         {/* Image */}
@@ -1084,11 +1109,11 @@ export default function AdminProduct() {
                         <td className="px-6 py-4 text-xs font-bold text-white">
                           <div className="flex flex-col gap-0.5">
                             <span className="text-purple-400 font-extrabold">
-                              {formatPrice(hasPromo ? product.discountPrice : product.price)}
+                              {formatPrice(product.price)}
                             </span>
                             {hasPromo && (
                               <span className="text-[10px] text-slate-500 line-through font-medium">
-                                {formatPrice(product.price)}
+                                {formatPrice(product.discountPrice)}
                               </span>
                             )}
                           </div>

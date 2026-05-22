@@ -4,10 +4,14 @@ import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/layout/Header';
 import Home from './pages/client/Home';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+import CheckoutFailure from './pages/CheckoutFailure';
 import ProductDetail from './pages/client/Products/ProductDetail';
 import AllProducts from './pages/client/Products/AllProducts';
 import Footer from './components/layout/Footer';
 import Chatbot from './components/layout/Chatbot';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Client Auth & Account pages
 import Login from './pages/client/Login';
@@ -47,6 +51,9 @@ function AppContent() {
             {/* Client Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/failure" element={<CheckoutFailure />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/products" element={<AllProducts />} />
             <Route path="/category/:categorySlug" element={<AllProducts />} />
@@ -88,6 +95,7 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
+          <ScrollToTop />
           <AppContent />
         </Router>
       </CartProvider>

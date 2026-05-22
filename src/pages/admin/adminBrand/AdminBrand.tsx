@@ -263,7 +263,7 @@ export default function AdminBrand() {
                     <td className="px-6 py-4">
                       <div className="w-10 h-10 rounded-xl bg-slate-950 p-1.5 border border-slate-800 flex items-center justify-center">
                         {brand.logo ? (
-                          <img src={brand.logo} alt={brand.name} className="w-full h-full object-contain" />
+                          <img src={brand.logo.startsWith('http') ? brand.logo : `http://localhost:5000${brand.logo}`} alt={brand.name} className="w-full h-full object-contain" />
                         ) : (
                           <Copyright className="w-5 h-5 text-slate-600" />
                         )}
