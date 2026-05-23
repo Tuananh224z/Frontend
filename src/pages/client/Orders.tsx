@@ -44,14 +44,20 @@ export default function Orders() {
   }, []);
 
   const handleCancelOrder = async (orderId: string) => {
-    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+    const reason = window.prompt('Vui lòng nhập lý do hủy đơn hàng:');
+    if (reason === null) {
+      return; // Customer cancelled the prompt dialog
+    }
+    const trimmedReason = reason.trim();
+    if (!trimmedReason) {
+      alert('Bạn phải nhập lý do hủy đơn hàng!');
       return;
     }
     try {
       setIsCancelling(true);
       const response = await orderService.cancelOrder(
         orderId,
-        'Khách hàng yêu cầu hủy trên giao diện client'
+        trimmedReason
       );
       if (response.data?.status === 'success') {
         alert('Hủy đơn hàng thành công!');
