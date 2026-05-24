@@ -1,37 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import productService from '../../services/productService';
-import { ShoppingCart, Star, Cpu, HardDrive, Smartphone, ChevronRight } from 'lucide-react';
+import { Star, Smartphone, ChevronRight } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
-
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  discountPrice?: number;
-  images: string[];
-  slug: string;
-  specs: {
-    cpu?: string;
-    ram?: string;
-    storage?: string;
-    screenSize?: string;
-  };
-  brand?: {
-    name: string;
-  };
-  isFeatured?: boolean;
-}
-
-interface Brand {
-  _id: string;
-  name: string;
-  logo?: string;
-  logoUrl?: string;
-  description?: string;
-}
-
-const BACKEND_URL = 'http://localhost:5000';
+import type { Product } from '../../types/product';
+import type { Brand } from '../../types/brand';
+import ProductCard from '../../components/common/ProductCard';
+import { getProductImage } from '../../utils/productHelper';
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -166,25 +141,7 @@ export default function Home() {
   }, []);
 
 
-  // Tính phần trăm giảm giá (discountPrice là giá cũ, price là giá mới)
-  const getDiscountPercent = (price: number, discountPrice: number) => {
-    if (discountPrice <= price) return 0;
-    return Math.round(((discountPrice - price) / discountPrice) * 100);
-  };
 
-  // Định dạng tiền tệ
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
-
-  // Helper lấy URL ảnh của sản phẩm
-  const getProductImage = (images: string[]) => {
-    if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
-    const firstImg = images[0];
-    if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
-    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
-    return `${BACKEND_URL}${cleanPath}`;
-  };
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800">
@@ -309,82 +266,13 @@ export default function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {products.map((prod) => {
-              const hasDiscount = prod.discountPrice ? prod.discountPrice > prod.price : false;
-
-              return (
-                <div
-                  key={prod._id}
-                  className="flex flex-col bg-white rounded-2xl border border-slate-200/60 overflow-hidden hover:shadow-xl transition-all duration-300 group"
-                >
-                  {/* Product Image & Badge */}
-                  <Link
-                    to={`/product/${prod.slug}`}
-                    className="relative block pt-[75%] bg-slate-100 overflow-hidden shrink-0"
-                  >
-                    <img
-                      src={getProductImage(prod.images)}
-                      alt={prod.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    {hasDiscount && (
-                      <span className="absolute top-3 left-3 px-2 py-1 text-[10px] font-extrabold text-white bg-rose-500 rounded-lg">
-                        -{getDiscountPercent(prod.price, prod.discountPrice!)}%
-                      </span>
-                    )}
-                  </Link>
-
-                  {/* Product Info */}
-                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3 text-left">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                        {prod.brand?.name || 'Laptop'}
-                      </span>
-                      <Link to={`/product/${prod.slug}`} className="block">
-                        <h4 className="font-bold text-sm text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer">
-                          {prod.name}
-                        </h4>
-                      </Link>
-                    </div>
-
-                    {/* Tech specs info */}
-                    <div className="space-y-1.5 py-2 border-y border-slate-100">
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                        <Cpu className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                        <span className="line-clamp-1">{prod.specs?.cpu || 'Thiết bị phụ kiện'}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                        <HardDrive className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                        <span className="line-clamp-1">
-                          {prod.specs ? `${prod.specs.ram || 'N/A'} | ${prod.specs.storage || 'N/A'}` : 'Chính hãng'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Pricing */}
-                    <div className="flex items-baseline flex-wrap gap-1.5 pt-1">
-                      <span className="font-extrabold text-sm text-rose-500">
-                        {formatPrice(prod.price)}
-                      </span>
-                      {hasDiscount && (
-                        <span className="text-[11px] text-slate-400 line-through">
-                          {formatPrice(prod.discountPrice!)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Add to Cart button */}
-                    <button 
-                      onClick={() => addToCart(prod)}
-                      className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 rounded-xl transition-all duration-300 cursor-pointer"
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5" />
-                      <span>Thêm giỏ hàng</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {products.map((prod) => (
+              <ProductCard
+                key={prod._id}
+                product={prod}
+                onAddToCart={addToCart}
+              />
+            ))}
           </div>
         )}
       </section>
@@ -406,7 +294,7 @@ export default function Home() {
               <div className="w-16 h-16 rounded-full overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center mb-3 group-hover:border-indigo-500/30 transition-all duration-300">
                 {brand.logo ? (
                   <img
-                    src={brand.logo.startsWith('http') ? brand.logo : `${BACKEND_URL}${brand.logo}`}
+                    src={getProductImage(brand.logo)}
                     alt={brand.name}
                     className="w-full h-full object-cover"
                   />

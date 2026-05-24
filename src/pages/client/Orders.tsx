@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import orderService from '../../services/orderService';
 import { Package, Calendar, DollarSign, Clock, CheckCircle, Truck, XCircle, ChevronRight, Loader2 } from 'lucide-react';
-import QRPaymentModal from '../../components/common/QRPaymentModal';
+import QRPaymentModal from '../../components/OrderQRPaymentModal';
 
-const BACKEND_URL = 'http://localhost:5000';
+import { formatPrice } from '../../utils/format';
+import { getProductImage } from '../../utils/productHelper';
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -12,15 +13,6 @@ export default function Orders() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
   const [activeOrderIdForQR, setActiveOrderIdForQR] = useState<string | null>(null);
-
-  const getProductImage = (images: string[]) => {
-    if (!images || images.length === 0) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
-    const firstImg = images[0];
-    if (!firstImg) return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500';
-    if (firstImg.startsWith('http://') || firstImg.startsWith('https://')) return firstImg;
-    const cleanPath = firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
-    return `${BACKEND_URL}${cleanPath}`;
-  };
 
   const fetchOrders = async () => {
     try {
@@ -74,9 +66,7 @@ export default function Orders() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {

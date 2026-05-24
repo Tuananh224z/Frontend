@@ -1,9 +1,8 @@
 /**
- * Kiểu dữ liệu liên quan đến User và Address.
- * Dùng chung cho AuthContext, services, pages.
+ * Type liên quan tới Người dùng và Địa chỉ.
  */
 
-/** Địa chỉ gọn — lưu trong User.address (địa chỉ mặc định) */
+/** Địa chỉ rút gọn (lưu trong User.address — địa chỉ mặc định) */
 export interface Address {
   street: string;
   ward: string;
@@ -11,7 +10,7 @@ export interface Address {
   city: string;
 }
 
-/** Một địa chỉ trong danh sách addresses của User */
+/** Một địa chỉ trong danh sách User.addresses[] */
 export interface UserAddress {
   _id?: string;
   fullName: string;
@@ -23,10 +22,10 @@ export interface UserAddress {
   isDefault: boolean;
 }
 
-/** Vai trò của tài khoản */
+/** Vai trò tài khoản */
 export type UserRole = 'customer' | 'admin';
 
-/** Thông tin tài khoản người dùng (đã ẩn password) */
+/** Tài khoản người dùng (đã ẩn password) */
 export interface User {
   _id: string;
   email: string;
@@ -39,19 +38,4 @@ export interface User {
   addresses?: UserAddress[];
   createdAt?: string;
   updatedAt?: string;
-}
-
-/** Payload đăng ký tài khoản */
-export interface RegisterPayload {
-  email: string;
-  password: string;
-  fullName: string;
-  phone?: string;
-  address?: Partial<Address>;
-}
-
-/** Payload đăng nhập */
-export interface LoginPayload {
-  email: string;
-  password: string;
 }

@@ -1,37 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import authService from '../services/authService';
+import type { User } from '../types/user';
 
-export interface Address {
-  street: string;
-  ward: string;
-  district: string;
-  city: string;
-}
-
-export interface UserAddress {
-  _id?: string;
-  fullName: string;
-  phone: string;
-  street: string;
-  ward: string;
-  district: string;
-  city: string;
-  isDefault: boolean;
-}
-
-export interface User {
-  _id: string;
-  email: string;
-  fullName: string;
-  phone?: string;
-  avatar?: string;
-  role: 'customer' | 'admin';
-  isActive: boolean;
-  address?: Address;
-  addresses?: UserAddress[];
-  createdAt?: string;
-  updatedAt?: string;
-}
+// Re-export để các file đang import { User, Address, UserAddress } từ AuthContext vẫn hoạt động
+export type { User, Address, UserAddress } from '../types/user';
 
 interface AuthContextType {
   user: User | null;

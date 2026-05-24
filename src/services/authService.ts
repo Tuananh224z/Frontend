@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api/axiosInstance';
 
 export const authService = {
   getMe: async () => {

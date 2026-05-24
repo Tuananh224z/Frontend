@@ -3,14 +3,14 @@ import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/layout/Header';
 import Home from './pages/client/Home';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import CheckoutSuccess from './pages/CheckoutSuccess';
-import CheckoutFailure from './pages/CheckoutFailure';
-import ProductDetail from './pages/client/Products/ProductDetail';
-import AllProducts from './pages/client/Products/AllProducts';
+import Cart from './pages/client/Cart';
+import Checkout from './pages/client/Checkout';
+import CheckoutSuccess from './pages/client/CheckoutSuccess';
+import CheckoutFailure from './pages/client/CheckoutFailure';
+import ProductDetail from './pages/client/ProductDetail';
+import AllProducts from './pages/client/AllProducts';
 import Footer from './components/layout/Footer';
-import Chatbot from './components/layout/Chatbot';
+import Chatbot from './components/ChatbotWidget';
 import ScrollToTop from './components/common/ScrollToTop';
 
 // Client Auth & Account pages
@@ -23,15 +23,15 @@ import AccountLayout from './components/layout/AccountLayout';
 
 // Admin page imports
 import AdminLayout from './components/layout/AdminLayout';
-import AdminDashboard from './pages/admin/adminDashboard/AdminDashboard';
-import AdminProduct from './pages/admin/adminProduct/AdminProduct';
-import AdminCategories from './pages/admin/adminCategories/AdminCategories';
-import AdminBrand from './pages/admin/adminBrand/AdminBrand';
-import AdminOrders from './pages/admin/adminOder/AdminOrders';
-import AdminUsers from './pages/admin/adminUser/AdminUsers';
-import AdminReviews from './pages/admin/adminRiviews/AdminReviews';
-import AdminChatbot from './pages/admin/adminChatbot/AdminChatbot';
-import AdminSettings from './pages/admin/adminSetting/AdminSettings';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProduct from './pages/admin/AdminProducts';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminBrand from './pages/admin/AdminBrands';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminReviews from './pages/admin/AdminReviews';
+import AdminChatbot from './pages/admin/AdminChatbot';
+import AdminSettings from './pages/admin/AdminSettings';
 
 import ErrorBoundary from './components/common/ErrorBoundary';
 

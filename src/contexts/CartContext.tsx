@@ -1,29 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
+import type { Product } from '../types/product';
+import type { CartItem } from '../types/cart';
 
-export interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  discountPrice?: number;
-  images: string[];
-  slug: string;
-  specs?: {
-    cpu?: string;
-    ram?: string;
-    storage?: string;
-    screenSize?: string;
-  };
-  brand?: {
-    name: string;
-  };
-  isFeatured?: boolean;
-}
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+// Re-export để các file đang import từ CartContext vẫn hoạt động
+export type { Product } from '../types/product';
+export type { CartItem } from '../types/cart';
 
 interface CartContextType {
   cartItems: CartItem[];
