@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
 import authService from '../../services/authService';
-import { Users, Search, Shield, UserX, UserCheck, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X } from 'lucide-react';
+import { Users, Search, Shield, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X } from 'lucide-react';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Lock/Unlock saving states
+  // Saving states
   const [actionUserId, setActionUserId] = useState<string | null>(null);
 
   // New user creation states
@@ -47,23 +46,7 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
-  const handleToggleLock = async (userId: string, currentStatus: boolean) => {
-    try {
-      setActionUserId(userId);
-      setError('');
-      setSuccess('');
-      const response = await authService.toggleUserLock(userId);
-      if (response.data?.status === 'success') {
-        const actionStr = currentStatus ? 'khóa' : 'mở khóa';
-        setSuccess(`Đã ${actionStr} tài khoản người dùng thành công!`);
-        fetchUsers();
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Thao tác thay đổi khóa tài khoản thất bại');
-    } finally {
-      setActionUserId(null);
-    }
-  };
+
 
   const handleChangeRole = async (userId: string, currentRole: string) => {
     const nextRole = currentRole === 'admin' ? 'customer' : 'admin';
@@ -156,12 +139,8 @@ export default function AdminUsers() {
       phone.includes(search);
 
     const matchesRole = roleFilter === 'All' || user.role === roleFilter;
-    const matchesStatus =
-      statusFilter === 'All' ||
-      (statusFilter === 'Active' && user.isActive) ||
-      (statusFilter === 'Locked' && !user.isActive);
 
-    return matchesSearch && matchesRole && matchesStatus;
+    return matchesSearch && matchesRole;
   });
 
   return (
@@ -192,19 +171,6 @@ export default function AdminUsers() {
               <option value="All">Tất cả vai trò</option>
               <option value="customer">Khách hàng</option>
               <option value="admin">Quản trị viên</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:border-purple-500 focus:outline-hidden"
-            >
-              <option value="All">Tất cả trạng thái</option>
-              <option value="Active">Hoạt động</option>
-              <option value="Locked">Bị khóa</option>
             </select>
           </div>
 
@@ -253,7 +219,6 @@ export default function AdminUsers() {
                   <th className="px-3 py-2.5">Địa chỉ</th>
                   <th className="px-3 py-2.5">Vai trò</th>
                   <th className="px-3 py-2.5">Đăng ký</th>
-                  <th className="px-3 py-2.5">Trạng thái</th>
                   <th className="px-3 py-2.5 text-right">Thao tác</th>
                 </tr>
               </thead>
@@ -331,17 +296,6 @@ export default function AdminUsers() {
                         </div>
                       </td>
 
-                      {/* Status */}
-                      <td className="px-3 py-2.5">
-                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${userObj.isActive
-                            ? 'text-emerald-400 bg-emerald-950/20 border-emerald-900/40'
-                            : 'text-red-400 bg-red-950/20 border-red-900/40'
-                          }`}>
-                          {userObj.isActive ? <UserCheck className="w-2.5 h-2.5 shrink-0" /> : <UserX className="w-2.5 h-2.5 shrink-0" />}
-                          <span>{userObj.isActive ? 'Mở' : 'Khóa'}</span>
-                        </span>
-                      </td>
-
                       {/* Action buttons */}
                       <td className="px-3 py-2.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -353,18 +307,6 @@ export default function AdminUsers() {
                           >
                             <Shield className="w-3 h-3 text-purple-500 shrink-0" />
                             <span>Quyền</span>
-                          </button>
-                          <button
-                            disabled={actionUserId === userObj._id}
-                            onClick={() => handleToggleLock(userObj._id, userObj.isActive)}
-                            className={`px-2 py-0.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50 ${userObj.isActive
-                                ? 'text-red-400 hover:text-red-300 hover:bg-red-950/25 border-slate-800 hover:border-red-900/40 bg-slate-900'
-                                : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/25 border-slate-800 hover:border-emerald-900/40 bg-slate-900'
-                              }`}
-                            title={userObj.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
-                          >
-                            {userObj.isActive ? <UserX className="w-3 h-3 shrink-0" /> : <UserCheck className="w-3 h-3 shrink-0" />}
-                            <span>{userObj.isActive ? 'Khóa' : 'Mở'}</span>
                           </button>
                         </div>
                       </td>
