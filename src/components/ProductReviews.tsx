@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Star, Loader2, MessageSquare, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Star, Loader2, MessageSquare, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import productService from '../services/productService';
+import reviewService from '../services/reviewService';
 import { Link } from 'react-router-dom';
 import type { Review as ReviewType } from '../types/review';
 
@@ -75,6 +76,24 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       setError(err.response?.data?.message || err.message || 'Đăng đánh giá thất bại. Vui lòng thử lại.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa đánh giá này không?')) {
+      return;
+    }
+    try {
+      setError('');
+      setSuccess('');
+      const res = await reviewService.deleteReview(reviewId);
+      if (res.data?.status === 'success') {
+        setSuccess('Xóa đánh giá thành công!');
+        // Tải lại danh sách đánh giá mới nhất
+        fetchReviews();
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Xóa đánh giá thất bại. Vui lòng thử lại.');
     }
   };
 
@@ -288,9 +307,20 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                       <h5 className="font-extrabold text-slate-800 text-sm leading-tight">
                         {reviewerName}
                       </h5>
-                      <span className="text-[10px] font-semibold text-slate-400">
-                        {formattedDate}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-semibold text-slate-400">
+                          {formattedDate}
+                        </span>
+                        {user && user._id === rev.user?._id && (
+                          <button
+                            onClick={() => handleDeleteReview(rev._id)}
+                            className="p-1 text-slate-400 hover:text-red-600 transition-colors border-0 bg-transparent cursor-pointer"
+                            title="Xóa đánh giá"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Stars */}
