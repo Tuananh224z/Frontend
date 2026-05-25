@@ -196,7 +196,7 @@ export default function Chatbot() {
         
         {/* Zalo Button */}
         <a
-          href="https://zalo.me"
+          href="https://zalo.me/0342055095"
           target="_blank"
           rel="noopener noreferrer"
           className="w-12 h-12 bg-[#0068ff] text-white rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center font-extrabold text-[13px] tracking-tight cursor-pointer"
