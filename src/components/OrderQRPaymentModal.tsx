@@ -12,6 +12,14 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
   const [paymentData, setPaymentData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const getBankName = (bankId: string) => {
+    const id = String(bankId || '').toLowerCase();
+    if (id === '970448' || id === 'ocb' || id === 'orientcommercialbank') {
+      return 'OCB - Ngân hàng Phương Đông';
+    }
+    return 'OCB - Ngân hàng Phương Đông';
+  };
   
   // State copy số tài khoản và nội dung chuyển khoản
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -261,7 +269,9 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
                   <div className="flex items-center justify-between p-3.5 bg-slate-50/80 border border-slate-100 rounded-2xl">
                     <div>
                       <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Ngân hàng</span>
-                      <span className="text-sm font-black text-slate-800 mt-0.5 block">MB - Ngân hàng Quân Đội</span>
+                      <span className="text-sm font-black text-slate-800 mt-0.5 block">
+                        {getBankName(paymentData?.bankId)}
+                      </span>
                     </div>
                   </div>
 
