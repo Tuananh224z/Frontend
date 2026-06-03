@@ -12,6 +12,7 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
   const [paymentData, setPaymentData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   const getBankName = (bankId: string) => {
     const id = String(bankId || '').toLowerCase();
@@ -33,6 +34,12 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
 
   const pollingIntervalRef = useRef<any>(null);
   const countdownIntervalRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (paymentData?.qrCodeUrl) {
+      setIsImageLoading(true);
+    }
+  }, [paymentData?.qrCodeUrl]);
 
   // 1. Tải thông tin thanh toán QR từ Backend
   const fetchPaymentInfo = async () => {
@@ -239,11 +246,18 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
               </div>
 
               {/* Ảnh QR Code */}
-              <div className="bg-white border border-slate-200/60 p-4 rounded-2xl shadow-xs flex items-center justify-center mb-5 max-w-[240px] max-h-[240px] aspect-square overflow-hidden">
+              <div className="relative bg-white border border-slate-200/60 p-4 rounded-2xl shadow-xs flex items-center justify-center mb-5 w-[240px] h-[240px] overflow-hidden shrink-0">
+                {isImageLoading && (
+                  <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center animate-pulse">
+                    <Loader2 className="w-8 h-8 animate-spin text-slate-400 mb-2" />
+                    <span className="text-[10px] font-bold text-slate-400 tracking-wider">Đang tải mã QR...</span>
+                  </div>
+                )}
                 <img 
                   src={paymentData?.qrCodeUrl} 
                   alt="VietQR code" 
-                  className="w-full h-full object-contain"
+                  onLoad={() => setIsImageLoading(false)}
+                  className={`w-full h-full object-contain transition-opacity duration-300 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                 />
               </div>
 

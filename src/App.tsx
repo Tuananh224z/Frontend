@@ -16,6 +16,8 @@ import ScrollToTop from './components/common/ScrollToTop';
 // Client Auth & Account pages
 import Login from './pages/client/Login';
 import Register from './pages/client/Register';
+import ForgotPassword from './pages/client/ForgotPassword';
+import ResetPassword from './pages/client/ResetPassword';
 import Profile from './pages/client/Profile';
 import Addresses from './pages/client/Addresses';
 import Orders from './pages/client/Orders';
@@ -59,6 +61,8 @@ function AppContent() {
             <Route path="/category/:categorySlug" element={<AllProducts />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Client Protected Routes */}
             <Route element={<AccountLayout />}>

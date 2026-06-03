@@ -111,7 +111,7 @@ export default function Login() {
                 <label htmlFor="password" className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
                   Mật khẩu
                 </label>
-                <Link to="#" className="text-xs font-bold text-red-600 hover:text-red-700 transition-colors">
+                <Link to="/forgot-password" className="text-xs font-bold text-red-600 hover:text-red-700 transition-colors">
                   Quên mật khẩu?
                 </Link>
               </div>

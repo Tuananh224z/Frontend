@@ -41,6 +41,14 @@ export const authService = {
 
   updateUserRole: async (userId: string, role: string) => {
     return api.put(`/users/${userId}/role`, { role });
+  },
+
+  forgotPassword: async (email: string) => {
+    return api.post('/auth/forgot-password', { email });
+  },
+
+  resetPassword: async (resetData: any) => {
+    return api.post('/auth/reset-password', resetData);
   }
 };
 
