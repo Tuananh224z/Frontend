@@ -131,27 +131,27 @@ export default function AdminProductForm({
   return (
     <div className="space-y-6 animate-in fade-in duration-200 text-left">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-5">
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => setViewMode('list')}
-            className="p-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:text-white rounded-xl text-slate-400 transition-colors cursor-pointer"
+            className="p-2 bg-white border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl text-slate-500 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h3 className="text-xl font-extrabold text-white">
+            <h3 className="text-xl font-extrabold text-slate-900">
               {viewMode === 'add' ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'}
             </h3>
-            <p className="text-xs font-semibold text-slate-450 mt-0.5 text-slate-400">Điền thông tin chi tiết sản phẩm laptop</p>
+            <p className="text-xs font-semibold text-slate-500 mt-0.5">Điền thông tin chi tiết sản phẩm laptop</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setViewMode('list')}
-            className="px-5 py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-850 hover:text-slate-200 text-slate-350 font-extrabold rounded-xl text-xs transition-colors cursor-pointer"
+            className="px-5 py-2.5 bg-slate-100 border border-slate-200 hover:bg-slate-200 hover:text-slate-900 text-slate-700 font-extrabold rounded-xl text-xs transition-colors cursor-pointer"
           >
             Huỷ
           </button>
@@ -159,7 +159,7 @@ export default function AdminProductForm({
             type="button"
             onClick={onSave}
             disabled={isSaving}
-            className="px-5 py-2.5 bg-red-650 hover:bg-red-700 text-white font-extrabold rounded-xl text-xs transition-colors border-0 shadow-lg shadow-red-550/15 flex items-center gap-1.5 cursor-pointer bg-red-600"
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold rounded-xl text-xs transition-colors border-0 shadow-md shadow-red-600/15 flex items-center gap-1.5 cursor-pointer bg-red-600"
           >
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu sản phẩm'}
           </button>
@@ -171,44 +171,44 @@ export default function AdminProductForm({
         {/* Left Column (Basic Info, Images, Specifications) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Thông tin cơ bản */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xs space-y-6">
-            <h4 className="text-base font-extrabold text-white border-b border-slate-800/80 pb-3">Thông tin cơ bản</h4>
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <h4 className="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3">Thông tin cơ bản</h4>
 
             {/* Tên sản phẩm */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Tên sản phẩm *</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tên sản phẩm *</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => onNameChange(e.target.value)}
                 placeholder="Nhập tên sản phẩm..."
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
               />
             </div>
 
             {/* SKU & Slug */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">SKU *</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">SKU *</label>
                 <input
                   type="text"
                   required
                   value={sku}
                   onChange={(e) => setSku(e.target.value)}
                   placeholder="Ví dụ: ROG-G15"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Slug *</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Slug *</label>
                 <input
                   type="text"
                   required
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   placeholder="Ví dụ: rog-g15"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
             </div>
@@ -216,7 +216,7 @@ export default function AdminProductForm({
             {/* Price, DiscountPrice, Stock */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá mới / Giá bán (VNĐ) *</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Giá mới / Giá bán (VNĐ) *</label>
                 <input
                   type="text"
                   required
@@ -227,11 +227,11 @@ export default function AdminProductForm({
                     setPrice(cleaned);
                   }}
                   placeholder="Nhập giá bán..."
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Giá cũ (VNĐ)</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Giá cũ (VNĐ)</label>
                 <input
                   type="text"
                   value={discountPrice}
@@ -241,11 +241,11 @@ export default function AdminProductForm({
                     setDiscountPrice(cleaned);
                   }}
                   placeholder="Nhập giá cũ..."
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Số lượng kho *</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Số lượng kho *</label>
                 <input
                   type="text"
                   required
@@ -256,7 +256,7 @@ export default function AdminProductForm({
                     setStock(cleaned);
                   }}
                   placeholder="Nhập số lượng..."
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
             </div>
@@ -264,18 +264,18 @@ export default function AdminProductForm({
             {/* Hiển thị & Thứ tự */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Hiển thị</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Hiển thị</label>
                 <select
                   value={isActive ? 'true' : 'false'}
                   onChange={(e) => setIsActive(e.target.value === 'true')}
-                  className="w-full px-3 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-400 cursor-pointer"
+                  className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-700 cursor-pointer"
                 >
                   <option value="true">Đang hiển thị (Bán)</option>
                   <option value="false">Ẩn</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Thứ tự</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Thứ tự</label>
                 <input
                   type="text"
                   value={sortOrder}
@@ -290,49 +290,49 @@ export default function AdminProductForm({
                     setSortOrder(cleaned);
                   }}
                   placeholder="Nhập thứ tự..."
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800"
                 />
               </div>
             </div>
 
             {/* Mô tả ngắn */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Mô tả ngắn</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mô tả ngắn</label>
               <textarea
                 rows={2}
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
                 placeholder="Hiển thị ở trang danh sách..."
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200 resize-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800 resize-none"
               />
             </div>
 
             {/* Mô tả chi tiết */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Mô tả chi tiết</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mô tả chi tiết</label>
               <textarea
                 rows={6}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Mô tả đầy đủ..."
-                className="w-full px-4 py-2.5 bg-slate-955 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-200 resize-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-sm font-semibold text-slate-800 resize-none"
               />
             </div>
           </div>
 
           {/* Card 2: Hình ảnh sản phẩm */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xs space-y-6">
-            <h4 className="text-base font-extrabold text-white border-b border-slate-800/80 pb-3">Hình ảnh sản phẩm</h4>
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <h4 className="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3">Hình ảnh sản phẩm</h4>
 
             {/* Drag & Drop Zone */}
             <div
               onDragOver={handleDragOver}
               onDrop={onImageUpload}
-              className="flex flex-col items-center justify-center gap-3 p-8 bg-slate-950 border border-dashed border-slate-800 rounded-xl transition-all hover:border-purple-500/50"
+              className="flex flex-col items-center justify-center gap-3 p-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl transition-all hover:border-purple-500/50"
             >
               <Upload className="w-8 h-8 text-slate-400 shrink-0" />
               <div className="text-center">
-                <span className="text-sm font-bold text-slate-200 block">
+                <span className="text-sm font-bold text-slate-800 block">
                   Kéo thả hoặc{' '}
                   <label className="text-red-500 hover:text-red-400 cursor-pointer underline inline">
                     chọn file
@@ -345,11 +345,11 @@ export default function AdminProductForm({
                     />
                   </label>
                 </span>
-                <span className="text-xs font-bold block mt-1 text-slate-450">
+                <span className="text-xs font-bold block mt-1 text-slate-500">
                   PNG, JPG, WEBP — tối đa 5MB/ảnh, 10 ảnh
                 </span>
               </div>
-              {isUploading && <Loader2 className="w-5 h-5 animate-spin text-purple-550 mt-1" />}
+              {isUploading && <Loader2 className="w-5 h-5 animate-spin text-purple-600 mt-1" />}
             </div>
 
             {/* Previews */}
@@ -358,7 +358,7 @@ export default function AdminProductForm({
                 {images.map((img, idx) => (
                   <div
                     key={idx}
-                    className="relative aspect-square bg-slate-950 border border-slate-850 rounded-xl overflow-hidden group p-1.5 flex items-center justify-center"
+                    className="relative aspect-square bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group p-1.5 flex items-center justify-center"
                   >
                     <img
                       src={getProductImage(img)}
@@ -368,9 +368,9 @@ export default function AdminProductForm({
                     <button
                       type="button"
                       onClick={() => onRemoveImage(idx)}
-                      className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity border-0 cursor-pointer rounded-xl"
+                      className="absolute inset-0 bg-red-650/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity border-0 cursor-pointer rounded-xl"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-5 h-5 text-white" />
                     </button>
                   </div>
                 ))}
@@ -379,13 +379,13 @@ export default function AdminProductForm({
           </div>
 
           {/* Card 3: Thông số kỹ thuật */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h4 className="text-base font-extrabold text-white">Thông số kỹ thuật</h4>
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 className="text-base font-extrabold text-slate-900">Thông số kỹ thuật</h4>
               <button
                 type="button"
                 onClick={onAddGroup}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 font-extrabold rounded-lg text-xs transition-colors cursor-pointer border-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-lg text-xs transition-colors cursor-pointer border border-slate-200"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Thêm nhóm</span>
@@ -394,35 +394,35 @@ export default function AdminProductForm({
 
             {/* Specs Groups */}
             {specGroups.length === 0 ? (
-              <div className="text-center py-8 text-slate-500 text-xs font-semibold">
+              <div className="text-center py-8 text-slate-400 text-xs font-semibold">
                 Chưa có thông số kỹ thuật nào. Bấm "Thêm nhóm" để bắt đầu.
               </div>
             ) : (
               <div className="space-y-4">
                 {specGroups.map((group, gIdx) => (
-                  <div key={gIdx} className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-955">
+                  <div key={gIdx} className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/50">
                     {/* Group Header */}
-                    <div className="flex items-center gap-3 px-4 py-3 bg-slate-900/50 border-b border-slate-800/80">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-slate-100/50 border-b border-slate-200">
                       <input
                         type="text"
                         required
                         value={group.name}
                         onChange={(e) => onUpdateGroupName(gIdx, e.target.value)}
                         placeholder="Tên nhóm (VD: Bộ xử lý, Màn hình)"
-                        className="flex-1 bg-transparent border-0 focus:outline-hidden text-sm font-bold text-white placeholder:text-slate-500"
+                        className="flex-1 bg-transparent border-0 focus:outline-hidden text-sm font-bold text-slate-800 placeholder:text-slate-400"
                       />
                       <button
                         type="button"
                         onClick={() => onRemoveGroup(gIdx)}
-                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors border-0 bg-transparent cursor-pointer"
+                        className="p-1.5 text-slate-500 hover:text-red-500 hover:bg-slate-200 rounded-lg transition-colors border-0 bg-transparent cursor-pointer"
                         title="Xóa nhóm"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 text-slate-500" />
                       </button>
                     </div>
 
                     {/* Group Items */}
-                    <div className="p-4 space-y-3">
+                    <div className="p-4 space-y-3 bg-white">
                       {group.items.map((item: any, iIdx: number) => (
                         <div key={iIdx} className="flex items-center gap-3">
                           <input
@@ -431,7 +431,7 @@ export default function AdminProductForm({
                             value={item.key}
                             onChange={(e) => onUpdateItem(gIdx, iIdx, 'key', e.target.value)}
                             placeholder="Tên thông số (VD: Hãng CPU)"
-                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-200"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-800"
                           />
                           <input
                             type="text"
@@ -439,12 +439,12 @@ export default function AdminProductForm({
                             value={item.value}
                             onChange={(e) => onUpdateItem(gIdx, iIdx, 'value', e.target.value)}
                             placeholder="Giá trị (VD: Intel Core i7)"
-                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-200"
+                            className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-800"
                           />
                           <button
                             type="button"
                             onClick={() => onRemoveItem(gIdx, iIdx)}
-                            className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors border-0 bg-transparent cursor-pointer"
+                            className="p-1.5 text-slate-500 hover:text-red-500 hover:bg-slate-100 rounded-lg transition-colors border-0 bg-transparent cursor-pointer"
                             title="Xóa thông số"
                           >
                             <X className="w-4 h-4" />
@@ -456,7 +456,7 @@ export default function AdminProductForm({
                       <button
                         type="button"
                         onClick={() => onAddItem(gIdx)}
-                        className="text-xs font-extrabold text-red-500 hover:text-red-400 flex items-center gap-1 mt-1 border-0 bg-transparent cursor-pointer"
+                        className="text-xs font-extrabold text-red-500 hover:text-red-600 flex items-center gap-1 mt-1 border-0 bg-transparent cursor-pointer"
                       >
                         + Thêm thông số
                       </button>
@@ -471,17 +471,17 @@ export default function AdminProductForm({
         {/* Right Column (Categorization, Summary) */}
         <div className="space-y-6">
           {/* Card 4: Phân loại */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xs space-y-6">
-            <h4 className="text-base font-extrabold text-white border-b border-slate-800/80 pb-3">Phân loại</h4>
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <h4 className="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3">Phân loại</h4>
 
             {/* Danh mục */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Danh mục *</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Danh mục *</label>
               <select
                 required
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-400 cursor-pointer"
+                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-700 cursor-pointer"
               >
                 <option value="">Chọn danh mục</option>
                 {categories.map((cat) => (
@@ -494,12 +494,12 @@ export default function AdminProductForm({
 
             {/* Thương hiệu */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Thương hiệu *</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Thương hiệu *</label>
               <select
                 required
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-400 cursor-pointer"
+                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-700 cursor-pointer"
               >
                 <option value="">Chọn thương hiệu</option>
                 {brands.map((br) => (
@@ -512,7 +512,7 @@ export default function AdminProductForm({
 
             {/* Nhãn sản phẩm */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nhãn sản phẩm</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nhãn sản phẩm</label>
               <div className="flex flex-wrap gap-2">
                 {[
                   {
@@ -521,7 +521,7 @@ export default function AdminProductForm({
                     icon: Flame,
                     checked: isBestSeller,
                     setter: setIsBestSeller,
-                    activeClass: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+                    activeClass: 'bg-orange-50 text-orange-700 border-orange-200',
                   },
                   {
                     id: 'isNewArrival',
@@ -529,7 +529,7 @@ export default function AdminProductForm({
                     icon: Sparkles,
                     checked: isNewArrival,
                     setter: setIsNewArrival,
-                    activeClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+                    activeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
                   },
                   {
                     id: 'isFeatured',
@@ -537,7 +537,7 @@ export default function AdminProductForm({
                     icon: Star,
                     checked: isFeatured,
                     setter: setIsFeatured,
-                    activeClass: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+                    activeClass: 'bg-purple-50 text-purple-700 border-purple-200',
                   },
                   {
                     id: 'isHot',
@@ -545,7 +545,7 @@ export default function AdminProductForm({
                     icon: Zap,
                     checked: isHot,
                     setter: setIsHot,
-                    activeClass: 'bg-red-500/10 text-red-400 border-red-500/30',
+                    activeClass: 'bg-red-50 text-red-700 border-red-200',
                   },
                 ].map((badge) => {
                   const Icon = badge.icon;
@@ -557,7 +557,7 @@ export default function AdminProductForm({
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer select-none ${
                         badge.checked
                           ? badge.activeClass
-                          : 'bg-slate-950 text-slate-400 border-slate-850 hover:bg-slate-850/50'
+                          : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -570,30 +570,30 @@ export default function AdminProductForm({
 
             {/* Tags */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Tags / Từ khoá</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tags / Từ khoá</label>
               <input
                 type="text"
                 value={tagsString}
                 onChange={(e) => setTagsString(e.target.value)}
                 placeholder="gaming, laptop, rtx4080 (cách bằng dấu phẩy)"
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-200"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-800"
               />
-              <span className="text-[10px] text-slate-500 mt-1 block font-medium">
+              <span className="text-[10px] text-slate-400 mt-1 block font-medium">
                 Giúp tìm kiếm và lọc sản phẩm dễ dàng hơn
               </span>
             </div>
           </div>
 
           {/* Card 5: Tóm tắt */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xs space-y-6">
-            <h4 className="text-base font-extrabold text-white border-b border-slate-800/80 pb-3">Tóm tắt</h4>
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <h4 className="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3">Tóm tắt</h4>
             <div>
               <textarea
                 rows={4}
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="Nhập tóm tắt nhanh thuộc tính sản phẩm..."
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-200 resize-none"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-800 resize-none"
               />
             </div>
           </div>

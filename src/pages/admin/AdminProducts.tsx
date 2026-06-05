@@ -83,7 +83,7 @@ export default function AdminProduct() {
     return (
       <div className="space-y-6">
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-red-950/20 text-red-400 text-sm font-semibold rounded-xl border border-red-900 animate-in fade-in duration-200">
+          <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 text-sm font-semibold rounded-xl border border-red-200 animate-in fade-in duration-200">
             <AlertCircle className="w-4.5 h-4.5 shrink-0" />
             <span>{error}</span>
           </div>
@@ -150,14 +150,14 @@ export default function AdminProduct() {
   return (
     <div className="space-y-6">
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-950/20 text-emerald-400 text-sm font-semibold rounded-xl border border-emerald-900 animate-in fade-in duration-200">
+        <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-xl border border-emerald-200 animate-in fade-in duration-200">
           <CheckCircle2 className="w-4.5 h-4.5 shrink-0" />
           <span>{success}</span>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-950/20 text-red-400 text-sm font-semibold rounded-xl border border-red-900 animate-in fade-in duration-200">
+        <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 text-sm font-semibold rounded-xl border border-red-200 animate-in fade-in duration-200">
           <AlertCircle className="w-4.5 h-4.5 shrink-0" />
           <span>{error}</span>
         </div>

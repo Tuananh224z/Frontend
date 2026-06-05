@@ -162,7 +162,7 @@ export default function AdminChatbot() {
           <Link
             key={`link-${matchIndex}`}
             to={linkUrl}
-            className="text-purple-400 hover:text-purple-300 font-extrabold underline underline-offset-2 hover:decoration-purple-300 transition-colors duration-200"
+            className="text-purple-600 hover:text-purple-700 font-extrabold underline underline-offset-2 hover:decoration-purple-700 transition-colors duration-200"
           >
             {linkText}
           </Link>
@@ -174,7 +174,7 @@ export default function AdminChatbot() {
             href={linkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-purple-400 hover:text-purple-300 font-extrabold underline underline-offset-2 hover:decoration-purple-300 transition-colors duration-200"
+            className="text-purple-600 hover:text-purple-700 font-extrabold underline underline-offset-2 hover:decoration-purple-700 transition-colors duration-200"
           >
             {linkText}
           </a>
@@ -194,12 +194,12 @@ export default function AdminChatbot() {
   return (
     <div className="space-y-6">
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-800">
+      <div className="flex border-b border-slate-200">
         <button
           onClick={() => setActiveTab('sessions')}
           className={`px-6 py-3 text-sm font-extrabold transition-all border-b-2 cursor-pointer ${activeTab === 'sessions'
-            ? 'border-purple-500 text-white'
-            : 'border-transparent text-slate-400 hover:text-slate-200'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
         >
           Lịch sử trò chuyện
@@ -207,8 +207,8 @@ export default function AdminChatbot() {
         <button
           onClick={() => setActiveTab('questions')}
           className={`px-6 py-3 text-sm font-extrabold transition-all border-b-2 cursor-pointer ${activeTab === 'questions'
-            ? 'border-purple-500 text-white'
-            : 'border-transparent text-slate-400 hover:text-slate-200'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
         >
           Câu hỏi phổ biến (FAQs)
@@ -216,8 +216,8 @@ export default function AdminChatbot() {
         <button
           onClick={() => setActiveTab('config')}
           className={`px-6 py-3 text-sm font-extrabold transition-all border-b-2 cursor-pointer flex items-center gap-1.5 ${activeTab === 'config'
-            ? 'border-purple-500 text-white'
-            : 'border-transparent text-slate-400 hover:text-slate-200'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
         >
           <Settings className="w-4 h-4" />
@@ -226,14 +226,14 @@ export default function AdminChatbot() {
       </div>
 
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-950/20 text-emerald-400 text-sm font-semibold rounded-xl border border-emerald-900">
+        <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-xl border border-emerald-200">
           <CheckCircle2 className="w-4.5 h-4.5 shrink-0" />
           <span>{success}</span>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-950/20 text-red-400 text-sm font-semibold rounded-xl border border-red-900">
+        <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 text-sm font-semibold rounded-xl border border-red-200">
           <AlertCircle className="w-4.5 h-4.5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -242,7 +242,7 @@ export default function AdminChatbot() {
       {/* Loading state for main data */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
         </div>
       ) : (
         <>
@@ -257,42 +257,42 @@ export default function AdminChatbot() {
                     placeholder="Tìm tên, email hoặc token..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-250"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-600 focus:ring-1 focus:ring-purple-600 focus:outline-hidden text-xs font-bold text-slate-800"
                   />
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
 
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 max-h-[600px] overflow-y-auto space-y-2">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Phiên hoạt động ({filteredSessions.length})</h3>
+                <div className="bg-white border border-slate-200 rounded-3xl p-4 max-h-[600px] overflow-y-auto space-y-2 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Phiên hoạt động ({filteredSessions.length})</h3>
                   {filteredSessions.length === 0 ? (
-                    <div className="text-center py-8 text-xs text-slate-500 font-semibold">Không tìm thấy phiên nào</div>
+                    <div className="text-center py-8 text-xs text-slate-400 font-semibold">Không tìm thấy phiên nào</div>
                   ) : (
                     filteredSessions.map((session) => (
                       <div
                         key={session._id}
                         onClick={() => handleSelectSession(session)}
                         className={`p-3 rounded-2xl border transition-all cursor-pointer text-xs space-y-2 ${selectedSession?._id === session._id
-                          ? 'bg-purple-950/40 border-purple-800/80 text-white shadow-xs'
-                          : 'bg-slate-950 border-slate-850 hover:bg-slate-850/30'
+                          ? 'bg-purple-50 border-purple-200 text-purple-950 shadow-sm'
+                          : 'bg-slate-50/50 border-slate-100 hover:bg-slate-100/50 text-slate-700'
                           }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-extrabold text-slate-200">
+                          <span className={`font-extrabold ${selectedSession?._id === session._id ? 'text-purple-900' : 'text-slate-800'}`}>
                             {session.user?.fullName || 'Khách vãng lai'}
                           </span>
                           {session.feedback && (
                             <span>
                               {session.feedback === 'like' ? (
-                                <ThumbsUp className="w-3.5 h-3.5 text-emerald-400 fill-emerald-500/10" />
+                                <ThumbsUp className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/10" />
                               ) : (
-                                <ThumbsDown className="w-3.5 h-3.5 text-red-400 fill-red-500/10" />
+                                <ThumbsDown className="w-3.5 h-3.5 text-red-600 fill-red-600/10" />
                               )}
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-slate-500 truncate font-semibold">Token: {session.sessionToken.slice(0, 18)}...</div>
-                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                        <div className="text-[10px] text-slate-400 truncate font-semibold">Token: {session.sessionToken.slice(0, 18)}...</div>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           <span>{formatDate(session.updatedAt)}</span>
                         </div>
                       </div>
@@ -304,20 +304,20 @@ export default function AdminChatbot() {
               {/* Chat details window */}
               <div className="lg:col-span-2">
                 {selectedSession ? (
-                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col h-[650px]">
+                  <div className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col h-[650px] shadow-sm">
                     {/* Header */}
-                    <div className="border-b border-slate-850 pb-4 flex items-center justify-between mb-4">
+                    <div className="border-b border-slate-100 pb-4 flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-extrabold text-sm text-white">
+                        <h3 className="font-extrabold text-sm text-slate-900">
                           Hội thoại với {selectedSession.user?.fullName || 'Khách vãng lai'}
                         </h3>
-                        <p className="text-[10px] text-slate-400 mt-1 font-semibold">
+                        <p className="text-[10px] text-slate-500 mt-1 font-semibold">
                           Email: {selectedSession.user?.email || 'Chưa đăng ký'} | Token: {selectedSession.sessionToken}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-slate-550 font-bold uppercase tracking-wider block">Phản hồi:</span>
-                        <span className={`text-xs font-bold ${selectedSession.feedback === 'like' ? 'text-emerald-400' : selectedSession.feedback === 'dislike' ? 'text-red-400' : 'text-slate-400'
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Phản hồi:</span>
+                        <span className={`text-xs font-bold ${selectedSession.feedback === 'like' ? 'text-emerald-600' : selectedSession.feedback === 'dislike' ? 'text-red-600' : 'text-slate-500'
                           }`}>
                           {selectedSession.feedback === 'like' ? 'Hài lòng 👍' : selectedSession.feedback === 'dislike' ? 'Chưa hài lòng 👎' : 'Chưa đánh giá'}
                         </span>
@@ -328,10 +328,10 @@ export default function AdminChatbot() {
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2 pb-4">
                       {isLoadingMessages ? (
                         <div className="flex items-center justify-center h-full">
-                          <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
+                          <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
                         </div>
                       ) : messages.length === 0 ? (
-                        <div className="text-center py-12 text-xs text-slate-500 font-bold">Không có tin nhắn nào trong phiên này</div>
+                        <div className="text-center py-12 text-xs text-slate-400 font-bold">Không có tin nhắn nào trong phiên này</div>
                       ) : (
                         messages.map((msg, index) => {
                           const isBot = msg.sender === 'bot';
@@ -339,8 +339,8 @@ export default function AdminChatbot() {
                             <div key={index} className={`flex gap-3 max-w-[85%] ${isBot ? 'mr-auto' : 'ml-auto flex-row-reverse'}`}>
                               {/* Avatar */}
                               <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 text-xs font-bold ${isBot
-                                ? 'bg-purple-950 border-purple-900 text-purple-400'
-                                : 'bg-slate-950 border-slate-800 text-slate-400'
+                                ? 'bg-purple-50 border-purple-200 text-purple-600'
+                                : 'bg-slate-50 border-slate-200 text-slate-600'
                                 }`}>
                                 {isBot ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
                               </div>
@@ -348,30 +348,30 @@ export default function AdminChatbot() {
                               {/* Message bubble */}
                               <div className="space-y-1.5">
                                 <div className={`p-3.5 rounded-2xl text-xs font-medium leading-relaxed whitespace-pre-wrap ${isBot
-                                  ? 'bg-slate-955 bg-slate-950 border border-slate-850 text-slate-200 rounded-tl-none'
-                                  : 'bg-purple-650 bg-purple-600 text-white rounded-tr-none'
+                                  ? 'bg-slate-50 border border-slate-100 text-slate-800 rounded-tl-none'
+                                  : 'bg-purple-600 text-white rounded-tr-none shadow-sm'
                                   }`}>
                                   {formatMessageText(msg.text)}
                                 </div>
-                                <span className="text-[9px] text-slate-500 font-bold block text-right px-1">
+                                <span className="text-[9px] text-slate-400 font-bold block text-right px-1">
                                   {new Date(msg.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
 
                                 {/* Suggested Products in Message */}
                                 {isBot && msg.suggestedProducts && msg.suggestedProducts.length > 0 && (
                                   <div className="mt-2.5 space-y-1.5">
-                                    <span className="text-[10px] text-slate-400 font-bold block">✨ Sản phẩm đề xuất trong cuộc thoại:</span>
+                                    <span className="text-[10px] text-slate-500 font-bold block">✨ Sản phẩm đề xuất trong cuộc thoại:</span>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       {msg.suggestedProducts.map((p: any, idx: number) => (
-                                        <div key={idx} className="bg-slate-950 border border-slate-850 rounded-xl p-2 flex items-center gap-2">
+                                        <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-2 flex items-center gap-2 shadow-sm">
                                           <img
                                             src={getProductImage(p.images)}
                                             alt={p.name}
-                                            className="w-8 h-8 object-contain bg-slate-900 rounded-lg p-0.5"
+                                            className="w-8 h-8 object-contain bg-white rounded-lg p-0.5"
                                           />
                                           <div className="min-w-0 text-[10px]">
-                                            <div className="font-bold text-slate-200 truncate">{p.name}</div>
-                                            <div className="text-purple-400 font-bold">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)}</div>
+                                            <div className="font-bold text-slate-800 truncate">{p.name}</div>
+                                            <div className="text-purple-600 font-bold">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price)}</div>
                                           </div>
                                         </div>
                                       ))}
@@ -386,10 +386,10 @@ export default function AdminChatbot() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 h-[650px] flex flex-col items-center justify-center text-slate-550 text-slate-500">
-                    <MessageCircle className="w-16 h-16 text-slate-800 mb-4 animate-pulse" />
+                  <div className="bg-white border border-slate-200 rounded-3xl p-6 h-[650px] flex flex-col items-center justify-center text-slate-400 shadow-sm">
+                    <MessageCircle className="w-16 h-16 text-slate-200 mb-4 animate-pulse" />
                     <p className="font-bold text-sm">Vui lòng chọn một phiên trò chuyện ở danh sách bên trái</p>
-                    <p className="text-xs text-slate-600 mt-1">để kiểm tra chi tiết nội dung tin nhắn và gợi ý AI</p>
+                    <p className="text-xs text-slate-400 mt-1">để kiểm tra chi tiết nội dung tin nhắn và gợi ý AI</p>
                   </div>
                 )}
               </div>
@@ -398,30 +398,30 @@ export default function AdminChatbot() {
 
           {/* TAB 2: Popular inquiries FAQs */}
           {activeTab === 'questions' && (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
-              <div className="border-b border-slate-850 pb-3 flex justify-between items-center">
-                <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+              <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
+                <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber-500" />
                   Top câu hỏi khách hàng hay đặt cho AI
                 </h3>
-                <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold px-2 py-0.5 rounded-full">FAQs</span>
+                <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 font-bold px-2 py-0.5 rounded-full">FAQs</span>
               </div>
 
               {popularQuestions.length === 0 ? (
-                <div className="text-center py-16 text-slate-500 text-sm font-semibold">Chưa thu thập đủ dữ liệu câu hỏi từ khách hàng</div>
+                <div className="text-center py-16 text-slate-400 text-sm font-semibold">Chưa thu thập đủ dữ liệu câu hỏi từ khách hàng</div>
               ) : (
                 <div className="space-y-4">
                   {popularQuestions.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-4 p-4 bg-slate-950 rounded-2xl border border-slate-850">
+                    <div key={idx} className="flex items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-7 h-7 rounded-xl bg-purple-950 border border-purple-900 text-purple-400 flex items-center justify-center font-extrabold text-xs shrink-0 select-none">
+                        <div className="w-7 h-7 rounded-xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center font-extrabold text-xs shrink-0 select-none">
                           {idx + 1}
                         </div>
-                        <p className="text-xs font-semibold text-slate-200 italic truncate max-w-xl">"{item.question}"</p>
+                        <p className="text-xs font-semibold text-slate-700 italic truncate max-w-xl">"{item.question}"</p>
                       </div>
                       <div className="text-right shrink-0">
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-2">Tần suất:</span>
-                        <span className="text-sm font-black text-white bg-slate-900 border border-slate-800 px-3 py-1 rounded-xl">{item.count} lần</span>
+                        <span className="text-sm font-black text-slate-800 bg-white border border-slate-200 px-3 py-1 rounded-xl">{item.count} lần</span>
                       </div>
                     </div>
                   ))}
@@ -432,10 +432,10 @@ export default function AdminChatbot() {
 
           {/* TAB 3: Chatbot Configuration systemPrompt */}
           {activeTab === 'config' && (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-2xl mx-auto space-y-6">
-              <div className="border-b border-slate-850 pb-3">
-                <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-400" />
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-2xl mx-auto space-y-6 shadow-sm">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
                   Cấu hình Prompt & Tham số AI Chatbot
                 </h3>
               </div>
@@ -443,8 +443,8 @@ export default function AdminChatbot() {
               <form onSubmit={handleSaveConfig} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                      Chọn Model AI <span className="text-purple-400">*</span>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                      Chọn Model AI <span className="text-purple-600">*</span>
                     </label>
                     <select
                       value={['llama-3.1-8b-instant', 'llama-3.3-70b-versatile'].includes(model) ? model : 'custom'}
@@ -453,7 +453,7 @@ export default function AdminChatbot() {
                           setModel(e.target.value);
                         }
                       }}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-200"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-600 focus:ring-1 focus:ring-purple-600 focus:outline-hidden text-xs font-bold text-slate-800"
                     >
                       <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Mặc định - Phản hồi nhanh)</option>
                       <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Mạnh mẽ - Phản hồi tốt hơn)</option>
@@ -461,7 +461,7 @@ export default function AdminChatbot() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
                       Nhập Model tùy chỉnh
                     </label>
                     <input
@@ -469,16 +469,16 @@ export default function AdminChatbot() {
                       placeholder="Ví dụ: llama-3.1-8b-instant"
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-200"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-600 focus:ring-1 focus:ring-purple-600 focus:outline-hidden text-xs font-bold text-slate-800"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    System Instruction / Prompt (Chỉ dẫn hệ thống) <span className="text-purple-400">*</span>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    System Instruction / Prompt (Chỉ dẫn hệ thống) <span className="text-purple-600">*</span>
                   </label>
-                  <p className="text-[10px] text-slate-500 font-bold mb-2">
+                  <p className="text-[10px] text-slate-400 font-bold mb-2">
                     Quyết định tính cách, phạm vi tư vấn và thái độ của AI Chatbot đối với người mua hàng.
                   </p>
                   <textarea
@@ -487,17 +487,17 @@ export default function AdminChatbot() {
                     value={systemPrompt}
                     onChange={(e) => setSystemPrompt(e.target.value)}
                     placeholder="Ví dụ: Bạn là một nhân viên kỹ thuật cửa hàng laptop thân thiện..."
-                    className="w-full px-4 py-3 bg-slate-955 bg-slate-950 border border-slate-850 rounded-2xl focus:border-purple-500 focus:outline-hidden text-xs font-semibold text-slate-200 leading-relaxed resize-none"
+                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:border-purple-600 focus:ring-1 focus:ring-purple-600 focus:outline-hidden text-xs font-semibold text-slate-800 leading-relaxed resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Temperature */}
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                      Độ sáng tạo (Temperature): <span className="text-white font-extrabold">{temperature}</span>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                      Độ sáng tạo (Temperature): <span className="text-slate-900 font-extrabold">{temperature}</span>
                     </label>
-                    <p className="text-[9px] text-slate-500 font-bold mb-3">
+                    <p className="text-[9px] text-slate-400 font-bold mb-3">
                       Giá trị thấp (0.1 - 0.5) giúp câu trả lời nhất quán, thực tế. Giá trị cao (0.8 - 1.2) giúp trả lời linh hoạt, bay bổng.
                     </p>
                     <div className="flex items-center gap-3">
@@ -508,17 +508,17 @@ export default function AdminChatbot() {
                         step="0.1"
                         value={temperature}
                         onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                        className="flex-1 accent-purple-600 h-1 bg-slate-850 rounded-lg cursor-pointer appearance-none"
+                        className="flex-1 accent-purple-600 h-1 bg-slate-200 rounded-lg cursor-pointer appearance-none"
                       />
                     </div>
                   </div>
 
                   {/* Max Tokens */}
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
                       Giới hạn độ dài phản hồi (Max Tokens)
                     </label>
-                    <p className="text-[9px] text-slate-500 font-bold mb-3">
+                    <p className="text-[9px] text-slate-400 font-bold mb-3">
                       Độ dài phản hồi tối đa của Chatbot (1 token ≈ 4 ký tự tiếng Việt).
                     </p>
                     <input
@@ -527,16 +527,16 @@ export default function AdminChatbot() {
                       max="2000"
                       value={maxTokens}
                       onChange={(e) => setMaxTokens(parseInt(e.target.value, 10))}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl focus:border-purple-500 focus:outline-hidden text-xs font-bold text-slate-200"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-purple-600 focus:ring-1 focus:ring-purple-600 focus:outline-hidden text-xs font-bold text-slate-800"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-3 border-t border-slate-850">
+                <div className="flex justify-end pt-3 border-t border-slate-100">
                   <button
                     type="submit"
                     disabled={isSavingConfig}
-                    className="px-5 py-2.5 bg-purple-650 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl text-xs transition-colors border-0 shadow-lg shadow-purple-550/15 flex items-center gap-1.5 cursor-pointer"
+                    className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl text-xs transition-colors border-0 shadow-lg shadow-purple-600/15 flex items-center gap-1.5 cursor-pointer"
                   >
                     {isSavingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Lưu cấu hình hệ thống'}
                   </button>
