@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import productService from '../../services/productService';
-import { Star, Search, CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MessageSquare, X } from 'lucide-react';
+import { Star, Search, CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, MessageSquare, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AdminReviews() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -11,6 +11,10 @@ export default function AdminReviews() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [actionId, setActionId] = useState<string | null>(null);
+
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   // Reply Modal States
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
@@ -114,6 +118,14 @@ export default function AdminReviews() {
     return matchesSearch && matchesRating && matchesStatus;
   });
 
+  // Reset page on filter or search change
+  useEffect(() => {
+    setPage(1);
+  }, [search, ratingFilter, statusFilter]);
+
+  const totalPages = Math.ceil(filteredReviews.length / limit);
+  const paginatedReviews = filteredReviews.slice((page - 1) * limit, page * limit);
+
   return (
     <div className="space-y-6 text-left">
       {/* Search and Action Bar */}
@@ -188,109 +200,139 @@ export default function AdminReviews() {
           Không tìm thấy đánh giá nào từ khách hàng
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-200">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
-                  <th className="px-6 py-4">Sản phẩm</th>
-                  <th className="px-6 py-4">Người đánh giá</th>
-                  <th className="px-6 py-4">Số sao</th>
-                  <th className="px-6 py-4">Nội dung bình luận</th>
-                  <th className="px-6 py-4">Ngày đánh giá</th>
-                  <th className="px-6 py-4">Trạng thái</th>
-                  <th className="px-6 py-4 text-right">Hành động</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredReviews.map((rev) => (
-                  <tr key={rev._id} className="hover:bg-slate-50/50 transition-colors text-sm">
-                    {/* Product Name */}
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900 max-w-[200px] truncate" title={rev.product?.name}>
-                        {rev.product?.name || 'Sản phẩm đã bị xóa'}
-                      </div>
-                      {rev.product?.slug && (
-                        <span className="text-[10px] text-purple-650 font-bold text-purple-600">/{rev.product.slug}</span>
-                      )}
-                    </td>
-
-                    {/* Customer */}
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-slate-800">{rev.user?.fullName || 'Khách hàng ẩn'}</div>
-                      <div className="text-xs text-slate-500">{rev.user?.email || 'N/A'}</div>
-                    </td>
-
-                    {/* Rating */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < rev.rating ? 'fill-amber-500 text-amber-500' : 'text-slate-300'
-                              }`}
-                          />
-                        ))}
-                      </div>
-                    </td>
-
-                    {/* Comment */}
-                    <td className="px-6 py-4 text-xs font-medium text-slate-700 max-w-sm whitespace-normal break-words">
-                      <div>{rev.comment}</div>
-                      {rev.adminReply && (
-                        <div className="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600">
-                          <span className="text-purple-600 font-bold">Phản hồi của Admin: </span>
-                          <span className="text-slate-700 font-medium">{rev.adminReply}</span>
-                          <span className="text-[9px] text-slate-400 font-medium block mt-1">
-                            {formatDate(rev.adminRepliedAt || rev.updatedAt)}
-                          </span>
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Date */}
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-500">{formatDate(rev.createdAt)}</td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full border ${rev.isActive
-                          ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
-                          : 'text-red-700 bg-red-50 border-red-200'
-                        }`}>
-                        {rev.isActive ? 'Hiển thị' : 'Đang ẩn'}
-                      </span>
-                    </td>
-
-                    {/* Action - Reply & Hide/Show */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenReplyModal(rev)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 hover:border-purple-300 text-purple-600 hover:bg-purple-50 bg-slate-50 cursor-pointer select-none"
-                          title="Phản hồi đánh giá"
-                        >
-                          <MessageSquare className="w-3.5 h-3.5 text-purple-600" />
-                          <span>{rev.adminReply ? 'Sửa PH' : 'Phản hồi'}</span>
-                        </button>
-                        <button
-                          disabled={actionId === rev._id}
-                          onClick={() => handleToggleStatus(rev)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer select-none border-slate-200 hover:border-purple-300 bg-slate-50 ${rev.isActive
-                              ? 'text-red-655 hover:bg-red-50 text-red-600'
-                              : 'text-emerald-655 hover:bg-emerald-50 text-emerald-600'
-                            }`}
-                          title={rev.isActive ? 'Ẩn bình luận vi phạm' : 'Kích hoạt lại hiển thị'}
-                        >
-                          {rev.isActive ? <EyeOff className="w-3.5 h-3.5 text-red-550" /> : <Eye className="w-3.5 h-3.5 text-emerald-555" />}
-                          <span>{rev.isActive ? 'Ẩn đi' : 'Hiển thị'}</span>
-                        </button>
-                      </div>
-                    </td>
+        <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-200">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
+                    <th className="px-6 py-4">Sản phẩm</th>
+                    <th className="px-6 py-4">Người đánh giá</th>
+                    <th className="px-6 py-4">Số sao</th>
+                    <th className="px-6 py-4">Nội dung bình luận</th>
+                    <th className="px-6 py-4">Ngày đánh giá</th>
+                    <th className="px-6 py-4">Trạng thái</th>
+                    <th className="px-6 py-4 text-right">Hành động</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedReviews.map((rev) => (
+                    <tr key={rev._id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                      {/* Product Name */}
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-slate-900 max-w-[200px] truncate" title={rev.product?.name}>
+                          {rev.product?.name || 'Sản phẩm đã bị xóa'}
+                        </div>
+                        {rev.product?.slug && (
+                          <span className="text-[10px] text-purple-650 font-bold text-purple-600">/{rev.product.slug}</span>
+                        )}
+                      </td>
+
+                      {/* Customer */}
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-slate-800">{rev.user?.fullName || 'Khách hàng ẩn'}</div>
+                        <div className="text-xs text-slate-500">{rev.user?.email || 'N/A'}</div>
+                      </td>
+
+                      {/* Rating */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < rev.rating ? 'fill-amber-500 text-amber-500' : 'text-slate-300'
+                                }`}
+                            />
+                          ))}
+                        </div>
+                      </td>
+
+                      {/* Comment */}
+                      <td className="px-6 py-4 text-xs font-medium text-slate-700 max-w-sm whitespace-normal break-words">
+                        <div>{rev.comment}</div>
+                        {rev.adminReply && (
+                          <div className="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600">
+                            <span className="text-purple-600 font-bold">Phản hồi của Admin: </span>
+                            <span className="text-slate-700 font-medium">{rev.adminReply}</span>
+                            <span className="text-[9px] text-slate-400 font-medium block mt-1">
+                              {formatDate(rev.adminRepliedAt || rev.updatedAt)}
+                            </span>
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-xs font-semibold text-slate-500">{formatDate(rev.createdAt)}</td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full border ${rev.isActive
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                            : 'text-red-700 bg-red-50 border-red-200'
+                          }`}>
+                          {rev.isActive ? 'Hiển thị' : 'Đang ẩn'}
+                        </span>
+                      </td>
+
+                      {/* Action - Reply & Hide/Show */}
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenReplyModal(rev)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-200 hover:border-purple-300 text-purple-600 hover:bg-purple-50 bg-slate-50 cursor-pointer select-none"
+                            title="Phản hồi đánh giá"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5 text-purple-600" />
+                            <span>{rev.adminReply ? 'Sửa PH' : 'Phản hồi'}</span>
+                          </button>
+                          <button
+                            disabled={actionId === rev._id}
+                            onClick={() => handleToggleStatus(rev)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer select-none border-slate-200 hover:border-purple-300 bg-slate-50 ${rev.isActive
+                                ? 'text-red-655 hover:bg-red-50 text-red-600'
+                                : 'text-emerald-655 hover:bg-emerald-50 text-emerald-600'
+                              }`}
+                            title={rev.isActive ? 'Ẩn bình luận vi phạm' : 'Kích hoạt lại hiển thị'}
+                          >
+                            {rev.isActive ? <EyeOff className="w-3.5 h-3.5 text-red-550" /> : <Eye className="w-3.5 h-3.5 text-emerald-555" />}
+                            <span>{rev.isActive ? 'Ẩn đi' : 'Hiển thị'}</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-xs text-slate-500 font-bold">Tổng số: {filteredReviews.length} đánh giá</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="flex items-center justify-center px-4 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl select-none">
+                  Trang {page} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

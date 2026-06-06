@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import orderService from '../../services/orderService';
-import { ShoppingCart, Search, Edit3, CheckCircle2, AlertCircle, Loader2, Eye, Calendar, DollarSign, User } from 'lucide-react';
+import { ShoppingCart, Search, Edit3, CheckCircle2, AlertCircle, Loader2, Eye, Calendar, DollarSign, User, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -10,6 +10,10 @@ export default function AdminOrders() {
   const [paymentFilter, setPaymentFilter] = useState('All');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   // Edit Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,6 +105,13 @@ export default function AdminOrders() {
 
     return matchesSearch && matchesStatus && matchesPayment;
   });
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, paymentFilter]);
+
+  const totalPages = Math.ceil(filteredOrders.length / limit);
+  const paginatedOrders = filteredOrders.slice((page - 1) * limit, page * limit);
 
   const getOrderStatusClass = (status: string) => {
     switch (status) {
@@ -221,87 +232,117 @@ export default function AdminOrders() {
           Không tìm thấy đơn hàng nào
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-205">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
-                  <th className="px-6 py-4">Mã đơn</th>
-                  <th className="px-6 py-4">Khách hàng</th>
-                  <th className="px-6 py-4">Ngày đặt</th>
-                  <th className="px-6 py-4">Phương thức</th>
-                  <th className="px-6 py-4">Thanh toán</th>
-                  <th className="px-6 py-4">Trạng thái đơn</th>
-                  <th className="px-6 py-4">Tổng tiền</th>
-                  <th className="px-6 py-4 text-right">Hành động</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredOrders.map((order) => (
-                  <tr key={order._id} className="hover:bg-slate-50/50 transition-colors text-sm">
-                    {/* Order Code */}
-                    <td className="px-6 py-4 font-extrabold text-slate-900">{order.orderCode}</td>
-
-                    {/* Customer */}
-                    <td className="px-6 py-4">
-                      <div className="min-w-[150px]">
-                        <div className="font-bold text-slate-800">{order.user?.fullName || order.shippingAddress?.fullName}</div>
-                        <div className="text-xs text-slate-500">{order.user?.email || 'N/A'}</div>
-                      </div>
-                    </td>
-
-                    {/* Date */}
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-600">{formatDate(order.createdAt)}</td>
-
-                    {/* Payment Method */}
-                    <td className="px-6 py-4 text-xs font-bold text-slate-500">
-                      {order.paymentMethod === 'Online' ? 'Trực tuyến' : 'COD'}
-                    </td>
-
-                    {/* Payment Status */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full border ${getPaymentStatusClass(order.paymentStatus)}`}>
-                        {statusTranslations[order.paymentStatus] || order.paymentStatus}
-                      </span>
-                    </td>
-
-                    {/* Order Status */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full border ${getOrderStatusClass(order.orderStatus)}`}>
-                        {statusTranslations[order.orderStatus] || order.orderStatus}
-                      </span>
-                    </td>
-
-                    {/* Total Amount */}
-                    <td className="px-6 py-4 font-extrabold text-purple-600">{formatPrice(order.totalAmount)}</td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setDetailOrder(order);
-                            setIsDetailOpen(true);
-                          }}
-                          className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
-                          title="Xem chi tiết"
-                        >
-                          <Eye className="w-4 h-4 text-slate-500 hover:text-purple-650" />
-                        </button>
-                        <button
-                          onClick={() => handleOpenEditModal(order)}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
-                          title="Cập nhật trạng thái"
-                        >
-                          <Edit3 className="w-4 h-4 text-slate-500 hover:text-blue-600" />
-                        </button>
-                      </div>
-                    </td>
+        <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-205">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
+                    <th className="px-6 py-4">Mã đơn</th>
+                    <th className="px-6 py-4">Khách hàng</th>
+                    <th className="px-6 py-4">Ngày đặt</th>
+                    <th className="px-6 py-4">Phương thức</th>
+                    <th className="px-6 py-4">Thanh toán</th>
+                    <th className="px-6 py-4">Trạng thái đơn</th>
+                    <th className="px-6 py-4">Tổng tiền</th>
+                    <th className="px-6 py-4 text-right">Hành động</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedOrders.map((order) => (
+                    <tr key={order._id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                      {/* Order Code */}
+                      <td className="px-6 py-4 font-extrabold text-slate-900">{order.orderCode}</td>
+
+                      {/* Customer */}
+                      <td className="px-6 py-4">
+                        <div className="min-w-[150px]">
+                          <div className="font-bold text-slate-800">{order.user?.fullName || order.shippingAddress?.fullName}</div>
+                          <div className="text-xs text-slate-500">{order.user?.email || 'N/A'}</div>
+                        </div>
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-xs font-semibold text-slate-600">{formatDate(order.createdAt)}</td>
+
+                      {/* Payment Method */}
+                      <td className="px-6 py-4 text-xs font-bold text-slate-500">
+                        {order.paymentMethod === 'Online' ? 'Trực tuyến' : 'COD'}
+                      </td>
+
+                      {/* Payment Status */}
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full border ${getPaymentStatusClass(order.paymentStatus)}`}>
+                          {statusTranslations[order.paymentStatus] || order.paymentStatus}
+                        </span>
+                      </td>
+
+                      {/* Order Status */}
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full border ${getOrderStatusClass(order.orderStatus)}`}>
+                          {statusTranslations[order.orderStatus] || order.orderStatus}
+                        </span>
+                      </td>
+
+                      {/* Total Amount */}
+                      <td className="px-6 py-4 font-extrabold text-purple-600">{formatPrice(order.totalAmount)}</td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              setDetailOrder(order);
+                              setIsDetailOpen(true);
+                            }}
+                            className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
+                            title="Xem chi tiết"
+                          >
+                            <Eye className="w-4 h-4 text-slate-500 hover:text-purple-650" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenEditModal(order)}
+                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
+                            title="Cập nhật trạng thái"
+                          >
+                            <Edit3 className="w-4 h-4 text-slate-500 hover:text-blue-600" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-xs text-slate-500 font-bold">Tổng số: {filteredOrders.length} đơn hàng</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="flex items-center justify-center px-4 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl select-none">
+                  Trang {page} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

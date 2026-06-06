@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import productService from '../../services/productService';
-import { Tags, Plus, Search, Edit3, Trash2, CheckCircle2, AlertCircle, Eye, EyeOff, Loader2, Upload, X } from 'lucide-react';
+import { Tags, Plus, Search, Edit3, Trash2, CheckCircle2, AlertCircle, Eye, EyeOff, Loader2, Upload, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const BACKEND_URL = 'http://localhost:5000';
 
@@ -17,6 +17,10 @@ export default function AdminCategories() {
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const limit = 8;
 
   // Form Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -200,6 +204,14 @@ export default function AdminCategories() {
     (c.description && c.description.toLowerCase().includes(search.toLowerCase()))
   );
 
+  // Reset page when search filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  const totalPages = Math.ceil(filteredCategories.length / limit);
+  const paginatedCategories = filteredCategories.slice((page - 1) * limit, page * limit);
+
   return (
     <div className="space-y-6">
       {/* Search and Action Bar */}
@@ -251,83 +263,113 @@ export default function AdminCategories() {
           Không tìm thấy danh mục nào
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
-                  <th className="px-6 py-4">Hình ảnh</th>
-                  <th className="px-6 py-4">Tên danh mục</th>
-                  <th className="px-6 py-4">Slug</th>
-                  <th className="px-6 py-4">Mô tả</th>
-                  <th className="px-6 py-4">Trạng thái</th>
-                  <th className="px-6 py-4 text-right">Hành động</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredCategories.map((cat) => (
-                  <tr key={cat._id} className="hover:bg-slate-50/50 transition-colors text-sm">
-                    {/* Image */}
-                    <td className="px-6 py-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 p-1 border border-slate-150 flex items-center justify-center border-slate-200/60">
-                        {cat.image ? (
-                          <img src={getCategoryImage(cat.image)} alt={cat.name} className="w-full h-full object-contain" />
-                        ) : (
-                          <Tags className="w-5 h-5 text-slate-400" />
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Name */}
-                    <td className="px-6 py-4 font-bold text-slate-900">{cat.name}</td>
-
-                    {/* Slug */}
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-500">/{cat.slug}</td>
-
-                    {/* Description */}
-                    <td className="px-6 py-4 text-slate-600 max-w-xs truncate text-xs font-medium">
-                      {cat.description || 'Không có mô tả'}
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => toggleStatus(cat)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition-colors ${cat.isActive
-                          ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
-                          : 'text-slate-500 bg-slate-100 border-slate-200'
-                          }`}
-                        title="Click để đổi trạng thái"
-                      >
-                        {cat.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                        <span>{cat.isActive ? 'Hiển thị' : 'Ẩn'}</span>
-                      </button>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenEditModal(cat)}
-                          className="p-2 text-slate-400 hover:text-purple-650 hover:bg-purple-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
-                          title="Chỉnh sửa"
-                        >
-                          <Edit3 className="w-4 h-4 text-slate-500 hover:text-purple-600" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(cat._id)}
-                          className="p-2 text-slate-400 hover:text-red-650 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
-                          title="Xóa danh mục"
-                        >
-                          <Trash2 className="w-4 h-4 text-slate-500 hover:text-red-500" />
-                        </button>
-                      </div>
-                    </td>
+        <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-200">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
+                    <th className="px-6 py-4">Hình ảnh</th>
+                    <th className="px-6 py-4">Tên danh mục</th>
+                    <th className="px-6 py-4">Slug</th>
+                    <th className="px-6 py-4">Mô tả</th>
+                    <th className="px-6 py-4">Trạng thái</th>
+                    <th className="px-6 py-4 text-right">Hành động</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedCategories.map((cat) => (
+                    <tr key={cat._id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                      {/* Image */}
+                      <td className="px-6 py-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 p-1 border border-slate-150 flex items-center justify-center border-slate-200/60">
+                          {cat.image ? (
+                            <img src={getCategoryImage(cat.image)} alt={cat.name} className="w-full h-full object-contain" />
+                          ) : (
+                            <Tags className="w-5 h-5 text-slate-400" />
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Name */}
+                      <td className="px-6 py-4 font-bold text-slate-900">{cat.name}</td>
+
+                      {/* Slug */}
+                      <td className="px-6 py-4 text-xs font-semibold text-slate-500">/{cat.slug}</td>
+
+                      {/* Description */}
+                      <td className="px-6 py-4 text-slate-600 max-w-xs truncate text-xs font-medium">
+                        {cat.description || 'Không có mô tả'}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => toggleStatus(cat)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition-colors ${cat.isActive
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                            : 'text-slate-500 bg-slate-100 border-slate-200'
+                            }`}
+                          title="Click để đổi trạng thái"
+                        >
+                          {cat.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          <span>{cat.isActive ? 'Hiển thị' : 'Ẩn'}</span>
+                        </button>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenEditModal(cat)}
+                            className="p-2 text-slate-400 hover:text-purple-650 hover:bg-purple-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit3 className="w-4 h-4 text-slate-500 hover:text-purple-600" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(cat._id)}
+                            className="p-2 text-slate-400 hover:text-red-650 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border-0 bg-transparent"
+                            title="Xóa danh mục"
+                          >
+                            <Trash2 className="w-4 h-4 text-slate-500 hover:text-red-500" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-xs text-slate-500 font-bold">Tổng số: {filteredCategories.length} danh mục</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="flex items-center justify-center px-4 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl select-none">
+                  Trang {page} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

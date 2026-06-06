@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import authService from '../../services/authService';
-import { Users, Search, Shield, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X } from 'lucide-react';
+import { Users, Search, Shield, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
@@ -9,6 +9,10 @@ export default function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState('All');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   // Saving states
   const [actionUserId, setActionUserId] = useState<string | null>(null);
@@ -143,6 +147,13 @@ export default function AdminUsers() {
     return matchesSearch && matchesRole;
   });
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, roleFilter]);
+
+  const totalPages = Math.ceil(filteredUsers.length / limit);
+  const paginatedUsers = filteredUsers.slice((page - 1) * limit, page * limit);
+
   return (
     <div className="space-y-6 text-left">
       {/* Search and Action Bar */}
@@ -209,113 +220,143 @@ export default function AdminUsers() {
           Không tìm thấy thành viên nào
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-200">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px] text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
-                  <th className="px-3 py-2.5">Thành viên</th>
-                  <th className="px-3 py-2.5">Liên hệ</th>
-                  <th className="px-3 py-2.5">Địa chỉ</th>
-                  <th className="px-3 py-2.5">Vai trò</th>
-                  <th className="px-3 py-2.5">Đăng ký</th>
-                  <th className="px-3 py-2.5 text-right">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredUsers.map((userObj) => {
-                  const hasAddress = userObj.address && (userObj.address.street || userObj.address.ward || userObj.address.city);
-                  const fullAddressStr = hasAddress
-                    ? [userObj.address.street, userObj.address.ward, userObj.address.district, userObj.address.city]
-                        .filter(Boolean)
-                        .join(', ')
-                    : '';
-                  return (
-                    <tr key={userObj._id} className="hover:bg-slate-50/50 transition-colors text-sm">
-                      {/* Member Info (Avatar + Name + ID) */}
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center font-extrabold text-xs text-purple-600 overflow-hidden shrink-0">
-                            {userObj.avatar ? (
-                              <img src={userObj.avatar} alt={userObj.fullName} className="w-full h-full object-cover" />
-                            ) : (
-                              userObj.fullName ? userObj.fullName[0].toUpperCase() : 'U'
+        <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs animate-in fade-in duration-200">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-50/75">
+                    <th className="px-3 py-2.5">Thành viên</th>
+                    <th className="px-3 py-2.5">Liên hệ</th>
+                    <th className="px-3 py-2.5">Địa chỉ</th>
+                    <th className="px-3 py-2.5">Vai trò</th>
+                    <th className="px-3 py-2.5">Đăng ký</th>
+                    <th className="px-3 py-2.5 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedUsers.map((userObj) => {
+                    const hasAddress = userObj.address && (userObj.address.street || userObj.address.ward || userObj.address.city);
+                    const fullAddressStr = hasAddress
+                      ? [userObj.address.street, userObj.address.ward, userObj.address.district, userObj.address.city]
+                          .filter(Boolean)
+                          .join(', ')
+                      : '';
+                    return (
+                      <tr key={userObj._id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                        {/* Member Info (Avatar + Name + ID) */}
+                        <td className="px-3 py-2.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center font-extrabold text-xs text-purple-600 overflow-hidden shrink-0">
+                              {userObj.avatar ? (
+                                <img src={userObj.avatar} alt={userObj.fullName} className="w-full h-full object-cover" />
+                              ) : (
+                                userObj.fullName ? userObj.fullName[0].toUpperCase() : 'U'
+                              )}
+                            </div>
+                            <div>
+                              <div className="font-extrabold text-slate-900 text-xs leading-tight">{userObj.fullName || 'Chưa đặt tên'}</div>
+                              <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">ID: {userObj._id.slice(-6)}</div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Contact Info (Email + Phone) */}
+                        <td className="px-3 py-2.5">
+                          <div className="space-y-0.5 max-w-[160px]">
+                            <div className="flex items-center gap-1.5 text-xs text-slate-600" title={userObj.email}>
+                              <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                              <span className="truncate">{userObj.email}</span>
+                            </div>
+                            {userObj.phone && (
+                              <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                                <Phone className="w-3 h-3 text-slate-400 shrink-0" />
+                                <span>{userObj.phone}</span>
+                              </div>
                             )}
                           </div>
-                          <div>
-                            <div className="font-extrabold text-slate-900 text-xs leading-tight">{userObj.fullName || 'Chưa đặt tên'}</div>
-                            <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">ID: {userObj._id.slice(-6)}</div>
-                          </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Contact Info (Email + Phone) */}
-                      <td className="px-3 py-2.5">
-                        <div className="space-y-0.5 max-w-[160px]">
-                          <div className="flex items-center gap-1.5 text-xs text-slate-600" title={userObj.email}>
-                            <Mail className="w-3 h-3 text-slate-400 shrink-0" />
-                            <span className="truncate">{userObj.email}</span>
-                          </div>
-                          {userObj.phone && (
-                            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                              <Phone className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span>{userObj.phone}</span>
+                        {/* Address */}
+                        <td className="px-3 py-2.5 text-xs font-semibold text-slate-600 max-w-[130px]" title={fullAddressStr}>
+                          {hasAddress ? (
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-purple-500 shrink-0" />
+                              <span className="truncate">{fullAddressStr}</span>
                             </div>
+                          ) : (
+                            <span className="text-slate-400 font-medium text-xs">Chưa cập nhật</span>
                           )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Address */}
-                      <td className="px-3 py-2.5 text-xs font-semibold text-slate-600 max-w-[130px]" title={fullAddressStr}>
-                        {hasAddress ? (
+                        {/* Role */}
+                        <td className="px-3 py-2.5">
+                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${userObj.role === 'admin'
+                              ? 'text-purple-700 bg-purple-50 border-purple-200'
+                              : 'text-blue-700 bg-blue-50 border-blue-200'
+                            }`}>
+                            <Shield className="w-2 h-2" />
+                            <span>{userObj.role === 'admin' ? 'Quản trị' : 'Khách hàng'}</span>
+                          </span>
+                        </td>
+
+                        {/* Created At */}
+                        <td className="px-3 py-2.5 text-xs font-semibold text-slate-600">
                           <div className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-purple-500 shrink-0" />
-                            <span className="truncate">{fullAddressStr}</span>
+                            <Calendar className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span>{formatDate(userObj.createdAt)}</span>
                           </div>
-                        ) : (
-                          <span className="text-slate-400 font-medium text-xs">Chưa cập nhật</span>
-                        )}
-                      </td>
+                        </td>
 
-                      {/* Role */}
-                      <td className="px-3 py-2.5">
-                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full border ${userObj.role === 'admin'
-                            ? 'text-purple-700 bg-purple-50 border-purple-200'
-                            : 'text-blue-700 bg-blue-50 border-blue-200'
-                          }`}>
-                          <Shield className="w-2 h-2" />
-                          <span>{userObj.role === 'admin' ? 'Quản trị' : 'Khách hàng'}</span>
-                        </span>
-                      </td>
-
-                      {/* Created At */}
-                      <td className="px-3 py-2.5 text-xs font-semibold text-slate-600">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span>{formatDate(userObj.createdAt)}</span>
-                        </div>
-                      </td>
-
-                      {/* Action buttons */}
-                      <td className="px-3 py-2.5 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            disabled={actionUserId === userObj._id}
-                            onClick={() => handleChangeRole(userObj._id, userObj.role)}
-                            className="px-2 py-0.5 text-[10px] font-bold text-slate-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg border border-slate-200 hover:border-purple-300 transition-all cursor-pointer bg-slate-50 flex items-center gap-1 disabled:opacity-50"
-                            title="Đổi vai trò"
-                          >
-                            <Shield className="w-3 h-3 text-purple-600 shrink-0" />
-                            <span>Quyền</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {/* Action buttons */}
+                        <td className="px-3 py-2.5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              disabled={actionUserId === userObj._id}
+                              onClick={() => handleChangeRole(userObj._id, userObj.role)}
+                              className="px-2 py-0.5 text-[10px] font-bold text-slate-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg border border-slate-200 hover:border-purple-300 transition-all cursor-pointer bg-slate-50 flex items-center gap-1 disabled:opacity-50"
+                              title="Đổi vai trò"
+                            >
+                              <Shield className="w-3 h-3 text-purple-600 shrink-0" />
+                              <span>Quyền</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 rounded-3xl border border-slate-200 shadow-xs">
+              <span className="text-xs text-slate-500 font-bold">Tổng số: {filteredUsers.length} thành viên</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="flex items-center justify-center px-4 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl select-none">
+                  Trang {page} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors cursor-pointer border border-slate-200"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
