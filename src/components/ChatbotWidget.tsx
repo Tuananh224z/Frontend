@@ -292,61 +292,93 @@ export default function Chatbot() {
             )}
 
             {/* Message List */}
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} gap-1`}
-              >
-                {/* Message Bubble */}
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                    msg.sender === 'user'
-                      ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-900/10'
-                      : 'bg-slate-800/80 text-slate-100 rounded-bl-none border border-slate-700/30'
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap">{formatMessageText(msg.text)}</p>
-                </div>
-
-                {/* Suggested Products (Only from Bot and if exists) - Hidden as requested */}
-
-                {/* Feedback buttons for bot answers (Only for the latest bot message) */}
-                {msg.sender === 'bot' && index === messages.length - 1 && (
-                  <div className="flex items-center gap-2 mt-1 self-start pl-2">
-                    <button
-                      onClick={() => handleFeedback('like')}
-                      className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                        feedback === 'like'
-                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
-                          : 'bg-transparent text-slate-500 border-slate-800 hover:text-slate-300'
-                      }`}
-                      title="Câu trả lời hữu ích"
-                    >
-                      <ThumbsUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleFeedback('dislike')}
-                      className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                        feedback === 'dislike'
-                          ? 'bg-rose-500/20 text-rose-400 border-rose-500/40'
-                          : 'bg-transparent text-slate-500 border-slate-800 hover:text-slate-300'
-                      }`}
-                      title="Câu trả lời chưa tốt"
-                    >
-                      <ThumbsDown className="w-3.5 h-3.5" />
-                    </button>
+            {messages.map((msg, index) => {
+              const isUser = msg.sender === 'user';
+              if (isUser) {
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start justify-end gap-2.5 w-full"
+                  >
+                    <div className="flex flex-col items-end gap-1 max-w-[80%]">
+                      <span className="text-[10px] text-slate-400 font-bold mr-1">Bạn</span>
+                      <div className="rounded-2xl px-4 py-2.5 text-sm leading-relaxed bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-900/10">
+                        <p className="whitespace-pre-wrap">{formatMessageText(msg.text)}</p>
+                      </div>
+                    </div>
+                    {/* User Avatar */}
+                    <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200 text-xs font-black shadow-xs overflow-hidden select-none">
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
+                      ) : (
+                        (user?.fullName || 'Guest')[0].toUpperCase()
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+                );
+              } else {
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2.5 w-full"
+                  >
+                    {/* Bot Avatar */}
+                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shrink-0 border border-indigo-400/30 text-white shadow-xs select-none">
+                      <Sparkles className="w-4 h-4 text-amber-300" />
+                    </div>
+                    <div className="flex flex-col items-start gap-1 max-w-[80%]">
+                      <span className="text-[10px] text-slate-400 font-bold ml-1">TechStore AI</span>
+                      <div className="rounded-2xl px-4 py-2.5 text-sm leading-relaxed bg-slate-800/80 text-slate-100 rounded-bl-none border border-slate-700/30">
+                        <p className="whitespace-pre-wrap">{formatMessageText(msg.text)}</p>
+                      </div>
+
+                      {/* Feedback buttons for bot answers (Only for the latest bot message) */}
+                      {index === messages.length - 1 && (
+                        <div className="flex items-center gap-2 mt-1 pl-1">
+                          <button
+                            onClick={() => handleFeedback('like')}
+                            className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                              feedback === 'like'
+                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                                : 'bg-transparent text-slate-500 border-slate-800 hover:text-slate-300'
+                            }`}
+                            title="Câu trả lời hữu ích"
+                          >
+                            <ThumbsUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleFeedback('dislike')}
+                            className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                              feedback === 'dislike'
+                                ? 'bg-rose-500/20 text-rose-400 border-rose-500/40'
+                                : 'bg-transparent text-slate-500 border-slate-800 hover:text-slate-300'
+                            }`}
+                            title="Câu trả lời chưa tốt"
+                          >
+                            <ThumbsDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+            })}
 
             {/* Typing Indicator */}
             {isTyping && (
-              <div className="flex items-center gap-1.5 self-start">
-                <div className="bg-slate-850 border border-slate-700/30 rounded-2xl rounded-bl-none px-4 py-3 flex gap-1 items-center">
-                  <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-75"></span>
-                  <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-150"></span>
-                  <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-225"></span>
+              <div className="flex items-start gap-2.5 w-full">
+                {/* Bot Avatar */}
+                <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shrink-0 border border-indigo-400/30 text-white shadow-xs select-none">
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                </div>
+                <div className="flex flex-col items-start gap-1 max-w-[80%]">
+                  <span className="text-[10px] text-slate-400 font-bold ml-1">TechStore AI</span>
+                  <div className="bg-slate-800/80 border border-slate-700/30 rounded-2xl rounded-bl-none px-4 py-3 flex gap-1 items-center">
+                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-75"></span>
+                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-150"></span>
+                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-225"></span>
+                  </div>
                 </div>
               </div>
             )}
