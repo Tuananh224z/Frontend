@@ -3,9 +3,19 @@ import { useAuth } from '../../contexts/AuthContext';
 import { User, Phone, Mail, Key, ShieldAlert, CheckCircle, Loader2 } from 'lucide-react';
 import authService from '../../services/authService';
 
+const isPlaceholderName = (name?: string | null) => {
+  if (!name) return true;
+  const lower = name.toLowerCase();
+  return (
+    lower === 'khách hàng khôi phục mật khẩu' ||
+    lower === 'khách hàng khôi phục' ||
+    lower.includes('khôi phục mật khẩu')
+  );
+};
+
 export default function Profile() {
   const { user, updateProfile } = useAuth();
-  const [fullName, setFullName] = useState(user?.fullName || '');
+  const [fullName, setFullName] = useState(user?.fullName && !isPlaceholderName(user.fullName) ? user.fullName : '');
   const [phone, setPhone] = useState(user?.phone || '');
   
   // Password state
@@ -24,7 +34,7 @@ export default function Profile() {
 
   React.useEffect(() => {
     if (user) {
-      setFullName(user.fullName);
+      setFullName(user.fullName && !isPlaceholderName(user.fullName) ? user.fullName : '');
       setPhone(user.phone || '');
     }
   }, [user]);

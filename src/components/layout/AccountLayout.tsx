@@ -2,6 +2,16 @@ import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Package, MapPin } from 'lucide-react';
 
+const isPlaceholderName = (name?: string | null) => {
+  if (!name) return true;
+  const lower = name.toLowerCase();
+  return (
+    lower === 'khách hàng khôi phục mật khẩu' ||
+    lower === 'khách hàng khôi phục' ||
+    lower.includes('khôi phục mật khẩu')
+  );
+};
+
 export default function AccountLayout() {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -62,12 +72,12 @@ export default function AccountLayout() {
                 {user?.avatar ? (
                   <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
                 ) : (
-                  user?.fullName ? user.fullName[0].toUpperCase() : 'U'
+                  (user?.fullName && !isPlaceholderName(user.fullName) ? user.fullName : user?.email || 'U')[0].toUpperCase()
                 )}
               </div>
               <div className="min-w-0">
                 <span className="font-extrabold text-sm text-slate-800 truncate block">
-                  {user?.fullName || 'Khách hàng'}
+                  {user?.fullName && !isPlaceholderName(user.fullName) ? user.fullName : user?.email}
                 </span>
                 <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>

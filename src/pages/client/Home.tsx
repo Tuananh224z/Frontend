@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import productService from '../../services/productService';
-import { Star, Smartphone, ChevronRight } from 'lucide-react';
+import { Star, ChevronRight } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import type { Product } from '../../types/product';
 import type { Brand } from '../../types/brand';

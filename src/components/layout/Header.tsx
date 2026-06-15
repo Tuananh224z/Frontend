@@ -4,6 +4,16 @@ import { Search, ShoppingCart, Menu, X, User, Package, MapPin, LayoutGrid, LogOu
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 
+const isPlaceholderName = (name?: string | null) => {
+  if (!name) return true;
+  const lower = name.toLowerCase();
+  return (
+    lower === 'khách hàng khôi phục mật khẩu' ||
+    lower === 'khách hàng khôi phục' ||
+    lower.includes('khôi phục mật khẩu')
+  );
+};
+
 export default function Header() {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
@@ -75,10 +85,12 @@ export default function Header() {
                       {user.avatar ? (
                         <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
                       ) : (
-                        (user.fullName || 'User')[0].toUpperCase()
+                        (isPlaceholderName(user.fullName) ? user.email : user.fullName || 'User')[0].toUpperCase()
                       )}
                     </div>
-                    <span className="text-[10px] font-bold text-slate-500 mt-1 truncate max-w-[80px]">{(user.fullName || 'User').split(' ').pop()}</span>
+                    <span className="text-[10px] font-bold text-slate-500 mt-1 truncate max-w-[80px]">
+                      {isPlaceholderName(user.fullName) ? user.email.split('@')[0] : (user.fullName || 'User').split(' ').pop()}
+                    </span>
                   </button>
 
                   {isDropdownOpen && (
@@ -91,8 +103,12 @@ export default function Header() {
                       <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl border border-slate-200/80 shadow-xl py-3 z-40 text-left animate-in fade-in slide-in-from-top-2 duration-200">
                         {/* User Profile Info */}
                         <div className="px-4 py-2 flex flex-col gap-0.5">
-                          <span className="font-bold text-slate-800 text-sm truncate">{user.fullName}</span>
-                          <span className="text-xs text-slate-400 font-medium truncate">{user.email}</span>
+                          {user.fullName && !isPlaceholderName(user.fullName) && (
+                            <span className="font-bold text-slate-800 text-sm truncate">{user.fullName}</span>
+                          )}
+                          <span className={`${isPlaceholderName(user.fullName) ? 'font-bold text-slate-800 text-sm' : 'text-xs text-slate-400 font-medium'} truncate`}>
+                            {user.email}
+                          </span>
                         </div>
 
                         {/* Divider */}
@@ -272,12 +288,16 @@ export default function Header() {
                     {user.avatar ? (
                       <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
                     ) : (
-                      (user.fullName || 'User')[0].toUpperCase()
+                      (isPlaceholderName(user.fullName) ? user.email : user.fullName || 'User')[0].toUpperCase()
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-bold text-slate-800 text-sm truncate">{user.fullName || 'Khách hàng'}</div>
-                    <div className="text-xs text-slate-400 font-medium truncate">{user.email}</div>
+                    <div className="font-bold text-slate-800 text-sm truncate">
+                      {isPlaceholderName(user.fullName) ? user.email : user.fullName || 'Khách hàng'}
+                    </div>
+                    {!isPlaceholderName(user.fullName) && (
+                      <div className="text-xs text-slate-400 font-medium truncate">{user.email}</div>
+                    )}
                   </div>
                 </div>
 
