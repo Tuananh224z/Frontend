@@ -68,6 +68,10 @@ export default function AdminDashboard() {
   const totalFeedback = (chatbot?.feedbackStats?.like || 0) + (chatbot?.feedbackStats?.dislike || 0);
   const helpfulness = totalFeedback > 0 ? Math.round((chatbot.feedbackStats.like / totalFeedback) * 100) : 100;
 
+  // Filter out items with missing/deleted products to prevent NaN or empty displays
+  const validBestSellers = summary?.bestSellers?.filter((item: any) => item?.product && item?.product?.name) || [];
+  const validTopAIRecommendations = chatbot?.topAIRecommendations?.filter((item: any) => item?.product && item?.product?.name) || [];
+
   return (
     <div className="space-y-8 text-left">
       {/* 4 Cards: Revenue, Orders, Users, Chatbot */}
@@ -141,11 +145,11 @@ export default function AdminDashboard() {
             <span className="text-[10px] bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full border border-amber-200">TOP 5</span>
           </div>
 
-          {summary?.bestSellers?.length === 0 ? (
+          {validBestSellers.length === 0 ? (
             <div className="text-center py-12 text-slate-400 text-sm font-semibold">Chưa có giao dịch bán hàng thành công</div>
           ) : (
             <div className="space-y-4">
-              {summary?.bestSellers?.map((item: any, idx: number) => (
+              {validBestSellers.map((item: any, idx: number) => (
                 <div key={idx} className="flex items-center justify-between gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-100">
                   <div className="flex items-center gap-3">
                     <img
@@ -178,11 +182,11 @@ export default function AdminDashboard() {
             <span className="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-full border border-purple-100">CHATBOT</span>
           </div>
 
-          {chatbot?.topAIRecommendations?.length === 0 ? (
+          {validTopAIRecommendations.length === 0 ? (
             <div className="text-center py-12 text-slate-400 text-sm font-semibold">Chưa có gợi ý từ chatbot</div>
           ) : (
             <div className="space-y-4">
-              {chatbot?.topAIRecommendations?.map((item: any, idx: number) => (
+              {validTopAIRecommendations.map((item: any, idx: number) => (
                 <div key={idx} className="flex items-center justify-between gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-100">
                   <div className="flex items-center gap-3">
                     <img
