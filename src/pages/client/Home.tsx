@@ -7,6 +7,89 @@ import type { Product } from '../../types/product';
 import type { Brand } from '../../types/brand';
 import ProductCard from '../../components/common/ProductCard';
 import { getProductImage } from '../../utils/productHelper';
+function BrandLogo({ name, logoUrl }: { name: string; logoUrl?: string }) {
+  const cleanName = name.toLowerCase().trim();
+
+  if (cleanName === 'apple') {
+    return (
+      <svg viewBox="0 0 24 24" className="w-8 h-8 fill-slate-700 group-hover:fill-black transition-colors duration-300">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.57 2.95-1.39z" />
+      </svg>
+    );
+  }
+
+  if (cleanName === 'asus') {
+    return (
+      <svg viewBox="0 0 120 20" className="w-20 h-6 fill-slate-700 group-hover:fill-blue-600 transition-colors duration-300">
+        <path d="M10.8 1.5L5.4 9.5H2.4l5.4-8H10.8z M0 20h6l2.5-4H3.6l4-5.6H2.6L0 20z M10.7 16h5l-2.4-4H8.2l2.5 4z M26.4 1.5H20.4L15.4 9.5h6l5-8z M18.8 20h6L27.2 16H21.2l-2.4 4z M29.5 16h5l-2.4-4h-5l2.4 4z M46 1.5H40l-2.5 4h6L46 1.5z M38.5 20h6l2.5-4h-6l-2.5 4z M47.3 16h5l-2.4-4h-5l2.4 4z M63.7 1.5h-6l-5 8h6l5-8z M56.1 20h6l2.5-4h-6.1l-2.4 4z M66.8 16h5l-2.4-4h-5l2.4 4z M82.2 1.5H76.2l-2.4 4h6L82.2 1.5z M74.7 20h6l2.5-4h-6l-2.5 4z M83.5 16h5l-2.4-4H81l2.5 4z M95.7 1.5H89.7l-5 8h6l5-8z M88.1 20H94l2.5-4h-6l-2.5 4z M98.8 16h5l-2.4-4H94l2.5 4z" />
+      </svg>
+    );
+  }
+
+  if (cleanName === 'msi') {
+    return (
+      <span className="font-black italic text-2xl tracking-tighter text-slate-700 group-hover:text-red-600 transition-colors duration-300">
+        msi
+      </span>
+    );
+  }
+
+  if (cleanName === 'logitech') {
+    return (
+      <span className="font-extrabold text-base tracking-tight text-slate-700 group-hover:text-teal-500 transition-colors duration-300">
+        logitech
+      </span>
+    );
+  }
+
+  if (cleanName === 'dell') {
+    return (
+      <div className="w-10 h-10 rounded-full border-2 border-slate-700 group-hover:border-blue-600 flex items-center justify-center font-black text-[10px] tracking-tight text-slate-700 group-hover:text-blue-600 transition-all duration-300">
+        DELL
+      </div>
+    );
+  }
+
+  if (cleanName === 'hp') {
+    return (
+      <div className="w-10 h-10 rounded-full bg-slate-700 group-hover:bg-blue-600 flex items-center justify-center font-bold text-white italic text-lg transition-all duration-300">
+        hp
+      </div>
+    );
+  }
+
+  if (cleanName === 'lenovo') {
+    return (
+      <span className="bg-slate-700 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-xs uppercase tracking-widest group-hover:bg-red-600 transition-colors duration-300">
+        lenovo
+      </span>
+    );
+  }
+
+  if (cleanName === 'acer') {
+    return (
+      <span className="font-black text-xl text-slate-700 group-hover:text-emerald-500 transition-colors duration-300 tracking-tight">
+        acer
+      </span>
+    );
+  }
+
+  if (logoUrl) {
+    return (
+      <img
+        src={getProductImage(logoUrl)}
+        alt={name}
+        className="max-w-full max-h-full object-contain filter group-hover:scale-105 transition-transform duration-300"
+      />
+    );
+  }
+
+  return (
+    <span className="font-extrabold text-sm text-slate-700 group-hover:text-indigo-650 transition-colors duration-300">
+      {name}
+    </span>
+  );
+}
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -288,26 +371,16 @@ export default function Home() {
           {brands.slice(0, 5).map((brand) => (
             <div
               key={brand._id}
-              className="flex flex-col items-center justify-center p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-indigo-500/50 hover:shadow-lg transition-all duration-300 group cursor-pointer"
+              className="flex flex-col items-center justify-center p-6 bg-white border border-slate-200/60 rounded-3xl hover:border-indigo-500/50 hover:shadow-lg transition-all duration-300 group cursor-pointer"
             >
               {/* Brand Logo */}
-              <div className="w-16 h-16 rounded-full overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center mb-3 group-hover:border-indigo-500/30 transition-all duration-300">
-                {brand.logo ? (
-                  <img
-                    src={getProductImage(brand.logo)}
-                    alt={brand.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-slate-600 group-hover:text-indigo-600">
-                    <Smartphone className="w-6 h-6" />
-                  </div>
-                )}
+              <div className="w-full h-16 flex items-center justify-center mb-4 transition-all duration-300">
+                <BrandLogo name={brand.name} logoUrl={brand.logo} />
               </div>
-              <h4 className="font-extrabold text-sm text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">
+              <h4 className="font-extrabold text-sm text-slate-800 group-hover:text-indigo-650 transition-colors duration-300">
                 {brand.name}
               </h4>
-              <p className="text-[10px] text-slate-400 text-center line-clamp-1 mt-1">
+              <p className="text-[10px] text-slate-450 text-center line-clamp-1 mt-1 font-medium">
                 {brand.description || 'Chính hãng'}
               </p>
             </div>
