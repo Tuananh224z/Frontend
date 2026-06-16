@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
-  const { login, user } = useAuth();
+  const { login, loginWithGoogle, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
@@ -50,6 +51,29 @@ export default function Login() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (credentialResponse.credential) {
+      setError('');
+      setIsLoading(true);
+      try {
+        const loggedUser = await loginWithGoogle(credentialResponse.credential);
+        if (loggedUser.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
+      } catch (err: any) {
+        setError(err.message || 'Đăng nhập Google thất bại. Vui lòng thử lại.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Không thể kết nối tới Google. Vui lòng thử lại.');
   };
 
   return (
@@ -157,6 +181,28 @@ export default function Login() {
             </button>
           </div>
         </form>
+
+        <div className="relative my-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-slate-400 font-bold tracking-wider">
+              Hoặc tiếp tục với
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-center w-full">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            theme="outline"
+            size="large"
+            shape="pill"
+            width="100%"
+          />
+        </div>
 
         <div className="text-center mt-6">
           <p className="text-sm text-slate-500 font-medium">

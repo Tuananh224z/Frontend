@@ -13,6 +13,10 @@ export const authService = {
     return api.post('/auth/login', credentials);
   },
 
+  loginWithGoogle: async (idToken: string) => {
+    return api.post('/auth/google', { idToken });
+  },
+
   register: async (userData: any) => {
     return api.post('/auth/register', userData);
   },
