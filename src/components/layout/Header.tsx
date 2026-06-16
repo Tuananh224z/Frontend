@@ -14,6 +14,15 @@ const isPlaceholderName = (name?: string | null) => {
   );
 };
 
+const getAvatarUrl = (avatar?: string) => {
+  if (!avatar) return '';
+  if (avatar.startsWith('http')) return avatar;
+  const backendUrl = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace('/api', '') 
+    : 'http://localhost:5000';
+  return `${backendUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+};
+
 export default function Header() {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
@@ -83,7 +92,7 @@ export default function Header() {
                   >
                     <div className="w-8 h-8 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-sm group-hover:bg-rose-100 transition-all duration-300 overflow-hidden">
                       {user.avatar ? (
-                        <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
+                        <img src={getAvatarUrl(user.avatar)} alt={user.fullName || 'User'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
                         (isPlaceholderName(user.fullName) ? user.email : user.fullName || 'User')[0].toUpperCase()
                       )}
@@ -286,7 +295,7 @@ export default function Header() {
                 <div className="flex items-center gap-3 px-3 py-1">
                   <div className="w-10 h-10 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-sm overflow-hidden shrink-0">
                     {user.avatar ? (
-                      <img src={user.avatar} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
+                      <img src={getAvatarUrl(user.avatar)} alt={user.fullName || 'User'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
                       (isPlaceholderName(user.fullName) ? user.email : user.fullName || 'User')[0].toUpperCase()
                     )}

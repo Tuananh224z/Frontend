@@ -12,6 +12,15 @@ const isPlaceholderName = (name?: string | null) => {
   );
 };
 
+const getAvatarUrl = (avatar?: string) => {
+  if (!avatar) return '';
+  if (avatar.startsWith('http')) return avatar;
+  const backendUrl = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace('/api', '') 
+    : 'http://localhost:5000';
+  return `${backendUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+};
+
 export default function AccountLayout() {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -70,7 +79,7 @@ export default function AccountLayout() {
             <div className="flex items-center gap-4.5 mb-6 pb-5 border-b border-slate-100">
               <div className="w-12 h-12 bg-rose-50 text-rose-600 border border-rose-100 rounded-full flex items-center justify-center font-extrabold text-lg shadow-xs overflow-hidden shrink-0">
                 {user?.avatar ? (
-                  <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
+                  <img src={getAvatarUrl(user.avatar)} alt={user.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
                   (user?.fullName && !isPlaceholderName(user.fullName) ? user.fullName : user?.email || 'U')[0].toUpperCase()
                 )}

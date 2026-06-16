@@ -8,6 +8,12 @@ import type { ChatMessage as Message } from '../types/chatbot';
 
 const BACKEND_URL = 'http://localhost:5000';
 
+const getAvatarUrl = (avatar?: string) => {
+  if (!avatar) return '';
+  if (avatar.startsWith('http')) return avatar;
+  return `${BACKEND_URL}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+};
+
 export default function Chatbot() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -309,7 +315,7 @@ export default function Chatbot() {
                     {/* User Avatar */}
                     <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200 text-xs font-black shadow-xs overflow-hidden select-none">
                       {user?.avatar ? (
-                        <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
+                        <img src={getAvatarUrl(user.avatar)} alt="User" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
                         (user?.fullName || 'Guest')[0].toUpperCase()
                       )}

@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react';
 import authService from '../../services/authService';
 import { Users, Search, Shield, CheckCircle2, AlertCircle, Loader2, Calendar, Phone, Mail, MapPin, UserPlus, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
+const getAvatarUrl = (avatar?: string) => {
+  if (!avatar) return '';
+  if (avatar.startsWith('http')) return avatar;
+  const backendUrl = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace('/api', '') 
+    : 'http://localhost:5000';
+  return `${backendUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+};
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +258,7 @@ export default function AdminUsers() {
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center font-extrabold text-xs text-purple-600 overflow-hidden shrink-0">
                               {userObj.avatar ? (
-                                <img src={userObj.avatar} alt={userObj.fullName} className="w-full h-full object-cover" />
+                                <img src={getAvatarUrl(userObj.avatar)} alt={userObj.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                               ) : (
                                 userObj.fullName ? userObj.fullName[0].toUpperCase() : 'U'
                               )}

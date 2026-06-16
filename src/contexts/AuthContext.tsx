@@ -66,8 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(JSON.parse(savedUser));
         } catch (e) {
           console.error('Failed to parse saved user:', e);
-          setUser(null);
-          localStorage.removeItem('user');
+          logout();
         }
         setLoading(false);
         // Refresh profile in background
@@ -89,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { token: newToken, user: userData } = response.data.data;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -99,6 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -109,6 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user || response.data;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -131,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { token: newToken, user: userData } = response.data.data;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -141,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -151,6 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user || response.data;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -175,6 +180,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { token: newToken, user: newUser } = response.data.data;
         const normalized = normalizeUser(newUser);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -185,6 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -195,6 +202,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = response.data.user || response.data;
         const normalized = normalizeUser(userData);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('accessToken', newToken);
         localStorage.setItem('user', JSON.stringify(normalized));
         setToken(newToken);
         setUser(normalized);
@@ -212,6 +220,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('access_token');
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
