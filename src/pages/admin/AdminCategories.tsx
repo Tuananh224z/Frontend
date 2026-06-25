@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import productService from '../../services/productService';
 import { Tags, Plus, Search, Edit3, Trash2, CheckCircle2, AlertCircle, Eye, EyeOff, Loader2, Upload, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 const getCategoryImage = (img: string) => {
   if (!img) return '';

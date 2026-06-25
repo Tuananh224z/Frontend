@@ -6,7 +6,7 @@ import { MessageCircle, X, Send, Sparkles, Laptop, ThumbsUp, ThumbsDown } from '
 import { useAuth } from '../contexts/AuthContext';
 import type { ChatMessage as Message } from '../types/chatbot';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 const getAvatarUrl = (avatar?: string) => {
   if (!avatar) return '';

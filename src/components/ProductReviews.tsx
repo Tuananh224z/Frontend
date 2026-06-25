@@ -6,6 +6,8 @@ import reviewService from '../services/reviewService';
 import { Link } from 'react-router-dom';
 import type { Review as ReviewType } from '../types/review';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
 interface ProductReviewsProps {
   productId: string;
 }
@@ -290,7 +292,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center shrink-0 border border-purple-200/60 overflow-hidden text-sm uppercase">
                     {reviewerAvatar ? (
                       <img 
-                        src={reviewerAvatar.startsWith('http') ? reviewerAvatar : `http://localhost:5000${reviewerAvatar.startsWith('/') ? '' : '/'}${reviewerAvatar}`} 
+                        src={reviewerAvatar.startsWith('http') ? reviewerAvatar : `${BACKEND_URL}${reviewerAvatar.startsWith('/') ? '' : '/'}${reviewerAvatar}`} 
                         alt={reviewerName}
                         className="w-full h-full object-cover"
                         onError={(e) => {

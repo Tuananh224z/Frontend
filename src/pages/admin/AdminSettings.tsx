@@ -3,7 +3,7 @@ import chatbotService from '../../services/chatbotService';
 import productService from '../../services/productService';
 import { Settings, Info, Phone, Mail, MapPin, Link2, Plus, Trash2, CheckCircle2, AlertCircle, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function AdminSettings() {
   const [logo, setLogo] = useState('');

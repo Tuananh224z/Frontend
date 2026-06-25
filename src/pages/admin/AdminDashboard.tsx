@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import chatbotService from '../../services/chatbotService';
 import { DollarSign, ShoppingCart, Users, MessageSquare, TrendingUp, AlertCircle, Loader2, Award, Compass } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function AdminDashboard() {
   const [summary, setSummary] = useState<any>(null);

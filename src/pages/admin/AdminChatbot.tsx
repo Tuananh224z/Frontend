@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import chatbotService from '../../services/chatbotService';
 import { Search, Award, CheckCircle2, AlertCircle, Loader2, ThumbsUp, ThumbsDown, Calendar, Bot, User, Settings, Sparkles, MessageCircle } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default function AdminChatbot() {
   const getProductImage = (images: string[]) => {

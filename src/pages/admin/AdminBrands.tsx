@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import productService from '../../services/productService';
 import { Copyright, Plus, Search, Edit3, Trash2, CheckCircle2, Eye, EyeOff, Loader2, AlertCircle, Upload, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 const getBrandLogo = (img: string) => {
   if (!img) return '';
