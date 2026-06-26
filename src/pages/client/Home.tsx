@@ -369,8 +369,9 @@ export default function Home() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
           {brands.slice(0, 5).map((brand) => (
-            <div
+            <Link
               key={brand._id}
+              to={`/products?brand=${brand.slug || brand._id}`}
               className="flex flex-col items-center justify-center p-6 bg-white border border-slate-200/60 rounded-3xl hover:border-indigo-500/50 hover:shadow-lg transition-all duration-300 group cursor-pointer"
             >
               {/* Brand Logo */}
@@ -383,7 +384,7 @@ export default function Home() {
               <p className="text-[10px] text-slate-450 text-center line-clamp-1 mt-1 font-medium">
                 {brand.description || 'Chính hãng'}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

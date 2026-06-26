@@ -289,12 +289,12 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               return (
                 <div key={rev._id} className="py-5 first:pt-0 last:pb-0 flex gap-4 text-left">
                   {/* User Avatar */}
-                  <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center shrink-0 border border-purple-200/60 overflow-hidden text-sm uppercase">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center shrink-0 border border-purple-200/60 overflow-hidden text-sm uppercase relative">
                     {reviewerAvatar ? (
                       <img 
                         src={reviewerAvatar.startsWith('http') ? reviewerAvatar : `${BACKEND_URL}${reviewerAvatar.startsWith('/') ? '' : '/'}${reviewerAvatar}`} 
                         alt={reviewerName}
-                        className="w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}

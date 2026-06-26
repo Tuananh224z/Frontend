@@ -27,8 +27,10 @@ export default function AllProducts() {
   const [brands, setBrands] = useState<Brand[]>([]);
 
   // Filter states
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedBrand, setSelectedBrand] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
+  const [selectedBrand, setSelectedBrand] = useState<string>(() => {
+    return searchParams.get('brand') || 'all';
+  });
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('ratings');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -55,6 +57,16 @@ export default function AllProducts() {
     }
   }, [categorySlug]);
 
+  // Sync brand query parameter from URL
+  useEffect(() => {
+    const brandParam = searchParams.get('brand');
+    if (brandParam) {
+      setSelectedBrand(brandParam);
+    } else {
+      setSelectedBrand('all');
+    }
+  }, [searchParams]);
+
   // Load categories & brands once on mount
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -76,6 +88,8 @@ export default function AllProducts() {
 
   // Fetch products when filters change
   useEffect(() => {
+    let active = true;
+
     const fetchFilteredProducts = async () => {
       setIsLoading(true);
       try {
@@ -114,6 +128,8 @@ export default function AllProducts() {
         }
 
         const res = await productService.getProducts(params);
+        if (!active) return;
+
         if (res.data?.products) {
           setProducts(res.data.products);
         } else if (res.data?.data) {
@@ -122,14 +138,21 @@ export default function AllProducts() {
           setProducts([]);
         }
       } catch (err) {
+        if (!active) return;
         console.error('Lỗi khi tải danh sách sản phẩm:', err);
         setProducts([]);
       } finally {
-        setIsLoading(false);
+        if (active) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchFilteredProducts();
+
+    return () => {
+      active = false;
+    };
   }, [selectedCategory, selectedBrand, selectedPriceRange, sortBy, searchParams]);
 
   // Helpers
@@ -224,7 +247,16 @@ export default function AllProducts() {
                     return (
                       <button
                         key={b._id}
-                        onClick={() => setSelectedBrand(isSelected ? 'all' : (b.slug || b._id || ''))}
+                        onClick={() => {
+                          const nextBrand = isSelected ? 'all' : (b.slug || b._id || '');
+                          const newParams = new URLSearchParams(searchParams);
+                          if (nextBrand === 'all') {
+                            newParams.delete('brand');
+                          } else {
+                            newParams.set('brand', nextBrand);
+                          }
+                          setSearchParams(newParams);
+                        }}
                         className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all duration-300 cursor-pointer ${
                           isSelected
                             ? 'bg-red-50 border-red-600 text-red-600'
@@ -501,7 +533,14 @@ export default function AllProducts() {
                       <button
                         key={b._id}
                         onClick={() => {
-                          setSelectedBrand(isSelected ? 'all' : (b.slug || b._id || ''));
+                          const nextBrand = isSelected ? 'all' : (b.slug || b._id || '');
+                          const newParams = new URLSearchParams(searchParams);
+                          if (nextBrand === 'all') {
+                            newParams.delete('brand');
+                          } else {
+                            newParams.set('brand', nextBrand);
+                          }
+                          setSearchParams(newParams);
                           setIsMobileFilterOpen(false);
                         }}
                         className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 cursor-pointer ${
