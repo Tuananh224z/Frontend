@@ -22,7 +22,6 @@ export default function Chatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const [feedback, setFeedback] = useState<'like' | 'dislike' | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -100,50 +99,6 @@ export default function Chatbot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
-
-  // Cập nhật các câu trả lời nhanh gợi ý dựa trên tin nhắn cuối cùng
-  useEffect(() => {
-    if (messages.length === 0) {
-      setQuickReplies(['Tư vấn mua laptop', 'Tôi muốn tự build PC', 'Sản phẩm bán chạy', 'Chính sách bảo hành']);
-      return;
-    }
-
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.sender === 'bot') {
-      const text = lastMessage.text;
-      if (text.includes('Bước 1: Ngân sách dự kiến') || text.includes('Bước 1:')) {
-        setQuickReplies(['Dưới 15 triệu', '15 - 25 triệu', 'Trên 25 triệu']);
-      } else if (text.includes('Bước 2:') && (text.includes('Laptop') || text.includes('nhu cầu'))) {
-        setQuickReplies(['Học tập, văn phòng mỏng nhẹ', 'Chơi game giải trí, đồ họa', 'Lập trình, kỹ thuật']);
-      } else if (text.includes('Bước 2:') && (text.includes('PC') || text.includes('bao gồm'))) {
-        setQuickReplies(['Chỉ case máy tính', 'Cả màn hình', 'Kèm phím chuột tai nghe']);
-      } else {
-        // Luôn hiển thị gợi ý bắt đầu để khách có thể tiếp tục click
-        setQuickReplies(['Tư vấn mua laptop', 'Tôi muốn tự build PC', 'Sản phẩm bán chạy']);
-      }
-    } else {
-      setQuickReplies([]);
-    }
-  }, [messages]);
-
-  // Gửi tin nhắn trả lời nhanh
-  const handleSendQuickReply = (text: string) => {
-    const newUserMessage: Message = {
-      sender: 'user',
-      text: text,
-      timestamp: new Date().toISOString()
-    };
-    setMessages((prev) => [...prev, newUserMessage]);
-    setIsTyping(true);
-
-    if (socketRef.current) {
-      socketRef.current.emit('sendMessage', {
-        sessionToken,
-        messageText: text,
-        userId: user?._id || null
-      });
-    }
-  };
 
   // Gửi tin nhắn
   const handleSendMessage = (e: React.FormEvent) => {
@@ -445,22 +400,6 @@ export default function Chatbot() {
                     <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-225"></span>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* Quick Replies */}
-            {!isTyping && quickReplies.length > 0 && (
-              <div className="flex flex-wrap gap-2 px-1 py-2 justify-start items-center">
-                {quickReplies.map((reply, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSendQuickReply(reply)}
-                    className="px-3 py-1.5 bg-indigo-600/15 hover:bg-indigo-600/35 active:scale-95 text-indigo-300 rounded-full text-xs font-semibold border border-indigo-500/25 transition-all duration-200 cursor-pointer shadow-sm"
-                  >
-                    {reply}
-                  </button>
-                ))}
               </div>
             )}
 
