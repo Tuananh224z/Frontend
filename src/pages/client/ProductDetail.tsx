@@ -44,8 +44,9 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Set the price difference for the upgraded version
-  const versionPriceDifference = 45988000;
+  // Set the price difference for the upgraded version dynamically
+  const isHighEndAsus = slug === 'laptop-gaming-asus-rog-zephyrus-g14-ga403wr-qs156ws' || slug === 'asus-rog-zephyrus-g14-2024-ga403';
+  const versionPriceDifference = isHighEndAsus ? 45988000 : 4000000;
 
   useEffect(() => {
     const fetchProduct = async () => {

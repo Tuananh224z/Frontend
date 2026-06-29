@@ -35,6 +35,7 @@ export interface Product {
   ratingsAverage?: number;
   ratingsQuantity?: number;
   description?: string;
+  summary?: string;
   shortDesc?: string;
   isFeatured?: boolean;
   isActive?: boolean;

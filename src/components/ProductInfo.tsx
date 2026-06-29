@@ -34,9 +34,19 @@ export default function ProductInfo({
   const basePrice = product.price;
   const baseOriginalPrice = hasDiscount ? product.discountPrice! : product.price;
 
-  // Actual display prices with version price difference added
-  const displayPrice = basePrice + (selectedVersion === 'upgrade' ? versionPriceDifference : 0);
-  const displayOriginalPrice = baseOriginalPrice + (selectedVersion === 'upgrade' ? versionPriceDifference : 0);
+  // Check if product is actually a Laptop/PC with valid RAM and Storage specifications
+  const hasRamAndStorage = !!(
+    product.specs?.ram && 
+    product.specs.ram.trim() !== '' && 
+    product.specs.ram.toUpperCase() !== 'N/A' && 
+    product.specs.storage && 
+    product.specs.storage.trim() !== '' && 
+    product.specs.storage.toUpperCase() !== 'N/A'
+  );
+
+  // Actual display prices with version price difference added (only if versions exist)
+  const displayPrice = basePrice + (selectedVersion === 'upgrade' && hasRamAndStorage ? versionPriceDifference : 0);
+  const displayOriginalPrice = baseOriginalPrice + (selectedVersion === 'upgrade' && hasRamAndStorage ? versionPriceDifference : 0);
   const displaySavings = displayOriginalPrice - displayPrice;
 
   // Versions
@@ -96,12 +106,14 @@ export default function ProductInfo({
       </div>
 
       {/* Highlight/Recommendation Banner */}
-      <div className="p-3 bg-rose-50/50 border border-rose-100/50 rounded-xl text-sm text-rose-600 font-medium leading-relaxed">
-        Laptop gaming 14 inch mạnh mẽ nhất thế giới với màn hình OLED
-      </div>
+      {(product.shortDesc || product.summary || product.slug === 'laptop-gaming-asus-rog-zephyrus-g14-ga403wr-qs156ws' || product.slug === 'asus-rog-zephyrus-g14-2024-ga403') && (
+        <div className="p-3 bg-rose-50/50 border border-rose-100/50 rounded-xl text-sm text-rose-600 font-medium leading-relaxed">
+          {product.shortDesc || product.summary || "Laptop gaming 14 inch mạnh mẽ nhất thế giới với màn hình OLED"}
+        </div>
+      )}
 
       {/* Versions Selector */}
-      {product.specs && (product.specs.ram || product.specs.storage) && (
+      {hasRamAndStorage && (
         <div className="flex flex-col gap-3">
           <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Phiên bản:</span>
           <div className="flex flex-wrap gap-3">
