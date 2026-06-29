@@ -111,14 +111,15 @@ export default function Chatbot() {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage.sender === 'bot') {
       const text = lastMessage.text;
-      if (text.includes('Bước 1: Ngân sách dự kiến')) {
+      if (text.includes('Bước 1: Ngân sách dự kiến') || text.includes('Bước 1:')) {
         setQuickReplies(['Dưới 15 triệu', '15 - 25 triệu', 'Trên 25 triệu']);
-      } else if (text.includes('Bước 2:') && text.includes('Laptop')) {
+      } else if (text.includes('Bước 2:') && (text.includes('Laptop') || text.includes('nhu cầu'))) {
         setQuickReplies(['Học tập, văn phòng mỏng nhẹ', 'Chơi game giải trí, đồ họa', 'Lập trình, kỹ thuật']);
-      } else if (text.includes('Bước 2:') && text.includes('Ngân sách này bạn muốn bao gồm')) {
+      } else if (text.includes('Bước 2:') && (text.includes('PC') || text.includes('bao gồm'))) {
         setQuickReplies(['Chỉ case máy tính', 'Cả màn hình', 'Kèm phím chuột tai nghe']);
       } else {
-        setQuickReplies([]);
+        // Luôn hiển thị gợi ý bắt đầu để khách có thể tiếp tục click
+        setQuickReplies(['Tư vấn mua laptop', 'Tôi muốn tự build PC', 'Sản phẩm bán chạy']);
       }
     } else {
       setQuickReplies([]);
