@@ -137,12 +137,12 @@ export default function Chatbot() {
     }
   };
 
-  // Helper to parse simple markdown links [text](url) and style them
+  // Helper to parse simple markdown links [text](url) and raw internal paths /product/slug
   const formatMessageText = (text: string) => {
     if (!text) return '';
     
-    // Regular expression to match markdown link format: [text](url)
-    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    // Regex to match either markdown link [text](url) OR raw product path /product/slug
+    const regex = /\[([^\]]+)\]\(([^)]+)\)|(\/product\/[a-zA-Z0-9-]+)/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match;
@@ -155,34 +155,48 @@ export default function Chatbot() {
         parts.push(text.substring(lastIndex, matchIndex));
       }
       
-      const linkText = match[1];
-      const linkUrl = match[2];
-      
-      // Check if it's an internal link
-      const isInternal = linkUrl.startsWith('/');
-      
-      if (isInternal) {
+      if (match[3]) {
+        // Raw internal link
+        const rawUrl = match[3];
         parts.push(
           <Link
             key={`link-${matchIndex}`}
-            to={linkUrl}
+            to={rawUrl}
             className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
           >
-            {linkText}
+            Xem chi tiết sản phẩm
           </Link>
         );
       } else {
-        parts.push(
-          <a
-            key={`link-${matchIndex}`}
-            href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
-          >
-            {linkText}
-          </a>
-        );
+        const linkText = match[1];
+        const linkUrl = match[2];
+        
+        // Check if it's an internal link
+        const isInternal = linkUrl.startsWith('/');
+        
+        if (isInternal) {
+          parts.push(
+            <Link
+              key={`link-${matchIndex}`}
+              to={linkUrl}
+              className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
+            >
+              {linkText}
+            </Link>
+          );
+        } else {
+          parts.push(
+            <a
+              key={`link-${matchIndex}`}
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-400 hover:text-amber-300 font-extrabold underline underline-offset-2 hover:decoration-amber-300 transition-colors duration-200"
+            >
+              {linkText}
+            </a>
+          );
+        }
       }
       
       lastIndex = regex.lastIndex;
