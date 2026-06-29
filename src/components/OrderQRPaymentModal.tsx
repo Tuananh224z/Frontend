@@ -27,7 +27,7 @@ export default function QRPaymentModal({ orderId, onClose, onPaymentSuccess }: Q
   const [copiedContent, setCopiedContent] = useState(false);
   
   // State đếm ngược (10 phút = 600 giây)
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(600);
   
   // Trạng thái thanh toán: 'waiting' | 'success' | 'expired'
   const [paymentState, setPaymentState] = useState<'waiting' | 'success' | 'expired'>('waiting');
